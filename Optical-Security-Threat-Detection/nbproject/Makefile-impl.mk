@@ -27,11 +27,11 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 PROJECTNAME=Optical-Security-Threat-Detection
 
 # Active Configuration
-DEFAULTCONF=Debug
+DEFAULTCONF=Debug1
 CONF=${DEFAULTCONF}
 
 # All Configurations
-ALLCONFS=Debug Release 
+ALLCONFS=Debug1 Release Debug Copy_of_Debug 
 
 
 # build

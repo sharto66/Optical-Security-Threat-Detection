@@ -49,7 +49,7 @@ build/Debug/MinGW-Windows/main.o: main.cpp \
  c:/opencv/build/include/opencv2/videoio/videoio_c.h \
  c:/opencv/build/include/opencv2/ml.hpp \
  c:/opencv/build/include/opencv2/imgproc/imgproc.hpp \
- c:/opencv/build/include/opencv2/highgui/highgui.hpp
+ c:/opencv/build/include/opencv2/highgui/highgui.hpp InputImage.h
 
 c:/opencv/build/include/opencv2/opencv.hpp:
 
@@ -152,3 +152,5 @@ c:/opencv/build/include/opencv2/ml.hpp:
 c:/opencv/build/include/opencv2/imgproc/imgproc.hpp:
 
 c:/opencv/build/include/opencv2/highgui/highgui.hpp:
+
+InputImage.h:

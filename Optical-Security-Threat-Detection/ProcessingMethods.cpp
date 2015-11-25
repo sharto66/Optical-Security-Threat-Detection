@@ -4,12 +4,17 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/objdetect.hpp>
+
 
 using namespace std;
 using namespace cv;
 
 int MAX_KERNEL_LENGTH = 31;
 int GAUSSIAN_KERNEL = 6;
+
+CascadeClassifier face_cascade;
+string face_cascade_name = "C:\\Projects\\Final Year Project\\Optical-Security-Threat-Detection\\Optical-Security-Threat-Detection/haarcascade_frontalface_alt2.xml";
 
 Mat filterImage(Mat src)
 {
@@ -23,12 +28,11 @@ Mat filterImage(Mat src)
 
 Mat blurImage(Mat src)
 {
-    Mat dst;
     for (int i=1; i<GAUSSIAN_KERNEL; i=i+2)
     {
-        GaussianBlur(src, dst, Size(i, i), 0, 0);
+        GaussianBlur(src, src, Size(i, i), 0, 0);
     }
-    return dst;
+    return src;
 }
 
 Mat blobDetection(Mat src)
@@ -65,7 +69,7 @@ Mat barrelDetection(Mat src)
     Mat dst;
     cvtColor(src, dst, CV_GRAY2BGR);
     std::vector<Vec2f> lines;
-    cv::HoughLines(src, lines, 1, CV_PI/180, 70, 0, 10);
+    cv::HoughLines(src, lines, 5, CV_PI/180, 100, 0, 0);
     cout << lines.size() << endl;
     for(int i = 0; i < lines.size(); i++)
     {
@@ -89,4 +93,102 @@ Mat edgeDetection(Mat src)
     Canny(src, edge, 50, 150, 3);
     edge.convertTo(dst, CV_8U);
     return dst;
+}
+
+Mat generalisedHough(Mat src)
+{
+    Mat templ = imread("C:\\Users\\Sean\\Pictures/pistol.jpg", IMREAD_GRAYSCALE);
+    vector<Vec4f> position;
+    
+    Ptr<GeneralizedHoughGuil> hough = createGeneralizedHoughGuil();
+
+    hough->setMinDist(100);
+    hough->setLevels(360);
+    hough->setDp(2);
+    hough->setMaxBufferSize(1000);
+    hough->setMinAngle(0);
+    hough->setMaxAngle(360);
+    hough->setMinScale(0.2);
+    hough->setMaxScale(3);
+    hough->setAngleStep(1);
+    hough->setAngleThresh(10000);
+    hough->setScaleStep(0.05);
+    hough->setScaleThresh(1000);
+    hough->setPosThresh(100);
+    
+    hough->setTemplate(templ);
+    
+    hough->detect(src, position);
+    
+    cout << "Found : " << position.size() << " objects" << endl;
+    
+    
+}
+
+Mat detectPeople(Mat src)
+{
+    HOGDescriptor hog;
+    hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
+ 
+    while (true)
+    {
+        if (src.empty())
+            continue;
+ 
+        vector<Rect> found, found_filtered;
+        hog.detectMultiScale(src, found, 0, Size(8,8), Size(32,32), 1.05, 2);
+        size_t i, j;
+        for (i=0; i<found.size(); i++) 
+        {
+            Rect r = found[i];
+            for (j=0; j<found.size(); j++) {
+                if (j!=i && (r & found[j]) == r)
+                    break;
+                }
+            if (j== found.size())
+                found_filtered.push_back(r);
+        }
+ 
+        for (i=0; i<found_filtered.size(); i++) 
+        {
+            Rect r = found_filtered[i];
+            r.x += cvRound(r.width*0.1);
+		    r.width = cvRound(r.width*0.8);
+		    r.y += cvRound(r.height*0.07);
+		    r.height = cvRound(r.height*0.8);
+		    rectangle(src, r.tl(), r.br(), Scalar(0,255,0), 3);        
+        }
+    }
+    return src;
+}
+
+Mat detectFaces(Mat src)
+{
+    std::vector<Rect> faces, faces_filtered;
+    if (!face_cascade.load(face_cascade_name)){
+        cout << "Error loading face cascade" << endl;
+        return src;
+    }
+    face_cascade.detectMultiScale(src, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(60, 60));
+    int i, j;
+    for (i=0; i<faces.size(); i++) 
+    {
+        Rect r = faces[i];
+        for (j=0; j<faces.size(); j++) {
+            if (j!=i && (r & faces[j]) == r)
+                break;
+            }
+        if (j== faces.size())
+            faces_filtered.push_back(r);
+    }
+    for (i=0; i<faces_filtered.size(); i++) 
+    {
+        Rect r = faces_filtered[i];
+        r.x += cvRound(r.width*0.1);
+                r.width = cvRound(r.width*0.8);
+                r.y += cvRound(r.height*0.07);
+                r.height = cvRound(r.height*0.8);
+                rectangle(src, r.tl(), r.br(), Scalar(0,255,0), 3);        
+    }
+    return src;
 }

@@ -4,6 +4,9 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/opencv.hpp"
+#include "InputImage.h"
 
 #define NUM 10
 
@@ -15,16 +18,28 @@ Mat blobDetection(Mat src);
 Mat edgeDetection(Mat src);
 Mat barrelDetection(Mat src);
 Mat blurImage(Mat src);
+Mat detectPeople(Mat src);
+Mat generalisedHough(Mat src);
+Mat detectFaces(Mat src);
+char* getImageSet(int set);
 
 int main()
 {
     Mat images[NUM];
     Mat image;
     char image_name[100];
+    char* image_location;
+    int imgSet;
+    
+    cout << "Enter 1 for pistols" << endl;
+    cout << "Enter 2 for all guns" << endl;
+    cin >> imgSet;
+    
+    image_location = getImageSet(imgSet);
     
     for(int i=0;i < NUM; i++)
-    {
-        sprintf(image_name, "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg",i+1);
+    {        
+        sprintf(image_name, image_location, i+1);
         image = imread(image_name, IMREAD_GRAYSCALE);
         images[i] = image;
     }
@@ -32,17 +47,44 @@ int main()
     cout << size << endl;
     for(int i=0;i < size; i++)
     {
-        if(images[i].data){
+        if(images[i].data)
+        {
            images[i] = blurImage(images[i]);
            //images[i] = filterImage(images[i]);
            //images[i] = blobDetection(images[i]);
            images[i] = edgeDetection(images[i]);
-           images[i] = barrelDetection(images[i]);
+           //images[i] = barrelDetection(images[i]);
+           images[i] = detectFaces(images[i]);
+           //images[i] = detectPeople(images[i]);
+           //generalisedHough(images[i]);
            namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
            imshow(string("Display window") + std::to_string(i+1), images[i]);
+        }
+        else
+        {
+            cout << "Something wrong" << endl;
         }
     }
     waitKey(0);
     cvDestroyAllWindows();
     return 0;
 }
+
+char* getImageSet(int set)
+{
+    char* image_name;
+    if(set == 1)
+    {
+        image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
+    }
+    else if(set == 2)
+    {
+        image_name = "C:\\Users\\Sean\\Pictures\\guns/image%d.jpg";
+    }
+    else if(set == 3)
+    {
+        image_name = "me_eating_cereal.jpg";
+    }
+    return image_name;
+}
+

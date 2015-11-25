@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/InputImage.o \
 	${OBJECTDIR}/ProcessingMethods.o \
 	${OBJECTDIR}/main.o
 
@@ -53,7 +54,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=-L../../../../../opencv/release/lib -lopencv_calib3d300.dll -lopencv_calib3d_pch_dephelp -lopencv_core300.dll -lopencv_core_pch_dephelp -lopencv_features2d300.dll -lopencv_features2d_pch_dephelp -lopencv_flann300.dll -lopencv_flann_pch_dephelp -lopencv_hal300 -lopencv_hal_pch_dephelp -lopencv_highgui300.dll -lopencv_highgui_pch_dephelp -lopencv_imgcodecs300.dll -lopencv_imgcodecs_pch_dephelp -lopencv_imgproc300.dll -lopencv_imgproc_pch_dephelp -lopencv_ml300.dll -lopencv_ml_pch_dephelp -lopencv_objdetect300.dll -lopencv_objdetect_pch_dephelp -lopencv_perf_calib3d_pch_dephelp -lopencv_perf_core_pch_dephelp -lopencv_perf_features2d_pch_dephelp -lopencv_perf_imgcodecs_pch_dephelp -lopencv_perf_imgproc_pch_dephelp -lopencv_perf_objdetect_pch_dephelp -lopencv_perf_photo_pch_dephelp -lopencv_perf_stitching_pch_dephelp -lopencv_perf_superres_pch_dephelp -lopencv_perf_video_pch_dephelp -lopencv_perf_videoio_pch_dephelp -lopencv_photo300.dll -lopencv_photo_pch_dephelp -lopencv_shape300.dll -lopencv_shape_pch_dephelp -lopencv_stitching300.dll -lopencv_stitching_pch_dephelp -lopencv_superres300.dll -lopencv_superres_pch_dephelp -lopencv_test_calib3d_pch_dephelp -lopencv_test_core_pch_dephelp -lopencv_test_features2d_pch_dephelp -lopencv_test_flann_pch_dephelp -lopencv_test_highgui_pch_dephelp -lopencv_test_imgcodecs_pch_dephelp -lopencv_test_imgproc_pch_dephelp -lopencv_test_ml_pch_dephelp -lopencv_test_objdetect_pch_dephelp -lopencv_test_photo_pch_dephelp -lopencv_test_shape_pch_dephelp -lopencv_test_stitching_pch_dephelp -lopencv_test_superres_pch_dephelp -lopencv_test_video_pch_dephelp -lopencv_test_videoio_pch_dephelp -lopencv_ts300 -lopencv_ts_pch_dephelp -lopencv_video300.dll -lopencv_video_pch_dephelp -lopencv_videoio300.dll -lopencv_videoio_pch_dephelp -lopencv_videostab300.dll -lopencv_videostab_pch_dephelp
+LDLIBSOPTIONS=-L../../../../opencv/debug/lib -L../../../../opencv/release/lib -lopencv_calib3d300d.dll -lopencv_calib3d_pch_dephelpd -lopencv_core300d.dll -lopencv_core_pch_dephelpd -lopencv_features2d300d.dll -lopencv_features2d_pch_dephelpd -lopencv_flann300d.dll -lopencv_flann_pch_dephelpd -lopencv_hal300d -lopencv_hal_pch_dephelpd -lopencv_highgui_pch_dephelpd -lopencv_imgcodecs300d.dll -lopencv_imgcodecs_pch_dephelpd -lopencv_imgproc300d.dll -lopencv_imgproc_pch_dephelpd -lopencv_ml300d.dll -lopencv_ml_pch_dephelpd -lopencv_objdetect300d.dll -lopencv_objdetect_pch_dephelpd -lopencv_photo300d.dll -lopencv_photo_pch_dephelpd -lopencv_shape300d.dll -lopencv_shape_pch_dephelpd -lopencv_stitching300d.dll -lopencv_stitching_pch_dephelpd -lopencv_superres300d.dll -lopencv_superres_pch_dephelpd -lopencv_ts_pch_dephelpd -lopencv_video300d.dll -lopencv_video_pch_dephelpd -lopencv_videoio_pch_dephelpd -lopencv_videostab300d.dll -lopencv_videostab_pch_dephelpd -lopencv_videoio300.dll -lopencv_videoio_pch_dephelp
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -62,6 +63,11 @@ LDLIBSOPTIONS=-L../../../../../opencv/release/lib -lopencv_calib3d300.dll -lopen
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/optical-security-threat-detection.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/optical-security-threat-detection ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/InputImage.o: InputImage.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -g -I/C/opencv/build/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/InputImage.o InputImage.cpp
 
 ${OBJECTDIR}/ProcessingMethods.o: ProcessingMethods.cpp 
 	${MKDIR} -p ${OBJECTDIR}
