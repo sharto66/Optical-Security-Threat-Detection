@@ -11,10 +11,12 @@ using namespace std;
 using namespace cv;
 
 int MAX_KERNEL_LENGTH = 31;
-int GAUSSIAN_KERNEL = 6;
+int GAUSSIAN_KERNEL = 7;
 
+cv::String face_cascade_name = "haarcascades/haarcascade_frontalface_alt.xml";
+cv::String body_cascade_name = "haarcascades/haarcascade_upperbody.xml";
 CascadeClassifier face_cascade;
-string face_cascade_name = "C:\\Projects\\Final Year Project\\Optical-Security-Threat-Detection\\Optical-Security-Threat-Detection/haarcascade_frontalface_alt2.xml";
+CascadeClassifier body_cascade;
 
 Mat filterImage(Mat src)
 {
@@ -68,21 +70,12 @@ Mat barrelDetection(Mat src)
 {
     Mat dst;
     cvtColor(src, dst, CV_GRAY2BGR);
-    std::vector<Vec2f> lines;
-    cv::HoughLines(src, lines, 5, CV_PI/180, 100, 0, 0);
+    std::vector<Vec4i> lines;
+    cv::HoughLinesP(src, lines, 1, CV_PI/180, 10, 5, 1);
     cout << lines.size() << endl;
     for(int i = 0; i < lines.size(); i++)
     {
-        float r = lines[i][0];
-        float theta = lines[i][1];
-        cv::Point p1, p2;
-        double a = cos(theta), b = sin(theta);
-        double x0 = a*r, y0 = b*r;
-        p1.x = cvRound(x0 + 1000*(-b)); //the first point
-        p1.y = cvRound(y0 + 1000*(a)); //the first point
-        p2.x = cvRound(x0 - 1000*(-b)); //the second point
-        p2.y = cvRound(y0 - 1000*(a)); //the second point
-        line(dst, p1, p2, Scalar(255,100,0), 1, 4, 0);
+        line(dst, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8);
     }
     return dst;
 }
@@ -127,37 +120,32 @@ Mat generalisedHough(Mat src)
 
 Mat detectPeople(Mat src)
 {
-    HOGDescriptor hog;
-    hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
- 
-    while (true)
+    std::vector<Rect> body, body_filtered;
+    if (!body_cascade.load(body_cascade_name)){
+        cout << "Error loading body cascade" << endl;
+        return src;
+    }
+    body_cascade.detectMultiScale(src, body, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+    int i, j;
+    for (i=0; i < body.size(); i++) 
     {
-        if (src.empty())
-            continue;
- 
-        vector<Rect> found, found_filtered;
-        hog.detectMultiScale(src, found, 0, Size(8,8), Size(32,32), 1.05, 2);
-        size_t i, j;
-        for (i=0; i<found.size(); i++) 
+        cout << "Body detected" << endl;
+        Rect r = body[i];
+        for (j=0; j < body.size(); j++)
         {
-            Rect r = found[i];
-            for (j=0; j<found.size(); j++) {
-                if (j!=i && (r & found[j]) == r)
-                    break;
-                }
-            if (j== found.size())
-                found_filtered.push_back(r);
+            if (j!=i && (r & body[j]) == r) break;
         }
- 
-        for (i=0; i<found_filtered.size(); i++) 
-        {
-            Rect r = found_filtered[i];
-            r.x += cvRound(r.width*0.1);
-		    r.width = cvRound(r.width*0.8);
-		    r.y += cvRound(r.height*0.07);
-		    r.height = cvRound(r.height*0.8);
-		    rectangle(src, r.tl(), r.br(), Scalar(0,255,0), 3);        
-        }
+        if (j== body.size())
+            body_filtered.push_back(r);
+    }
+    for (i=0; i < body_filtered.size(); i++) 
+    {
+        Rect r = body_filtered[i];
+        r.x += cvRound(r.width*0.1);
+        r.width = cvRound(r.width*0.8);
+        r.y += cvRound(r.height*0.07);
+        r.height = cvRound(r.height*0.8);
+        rectangle(src, r.tl(), r.br(), Scalar(0,255,0), 2);   
     }
     return src;
 }
@@ -169,26 +157,26 @@ Mat detectFaces(Mat src)
         cout << "Error loading face cascade" << endl;
         return src;
     }
-    face_cascade.detectMultiScale(src, faces, 1.1, 2, 0 | CASCADE_SCALE_IMAGE, Size(60, 60));
+    face_cascade.detectMultiScale(src, faces, 1.1, 1, 1 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
     int i, j;
     for (i=0; i<faces.size(); i++) 
     {
+        cout << "Face detected" << endl;
         Rect r = faces[i];
-        for (j=0; j<faces.size(); j++) {
-            if (j!=i && (r & faces[j]) == r)
-                break;
-            }
-        if (j== faces.size())
-            faces_filtered.push_back(r);
+        for (j=0; j<faces.size(); j++)
+        {
+            if (j!=i && (r & faces[j]) == r) break;
+        }
+        if (j== faces.size()) faces_filtered.push_back(r);
     }
     for (i=0; i<faces_filtered.size(); i++) 
     {
         Rect r = faces_filtered[i];
         r.x += cvRound(r.width*0.1);
-                r.width = cvRound(r.width*0.8);
-                r.y += cvRound(r.height*0.07);
-                r.height = cvRound(r.height*0.8);
-                rectangle(src, r.tl(), r.br(), Scalar(0,255,0), 3);        
+        r.width = cvRound(r.width*0.8);
+        r.y += cvRound(r.height*0.07);
+        r.height = cvRound(r.height*0.8);
+        rectangle(src, r.tl(), r.br(), Scalar(0,255,0), 3);   
     }
     return src;
 }

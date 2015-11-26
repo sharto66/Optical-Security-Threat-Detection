@@ -5,10 +5,9 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "opencv2/highgui/highgui.hpp"
-#include "opencv2/opencv.hpp"
 #include "InputImage.h"
 
-#define NUM 10
+#define NUM 30
 
 using namespace std;
 using namespace cv;
@@ -33,6 +32,8 @@ int main()
     
     cout << "Enter 1 for pistols" << endl;
     cout << "Enter 2 for all guns" << endl;
+    cout << "Enter 3 for test image in root" << endl;
+    cout << "Enter 4 for OpenCV test images" << endl;
     cin >> imgSet;
     
     image_location = getImageSet(imgSet);
@@ -40,7 +41,7 @@ int main()
     for(int i=0;i < NUM; i++)
     {        
         sprintf(image_name, image_location, i+1);
-        image = imread(image_name, IMREAD_GRAYSCALE);
+        image = imread(image_name);
         images[i] = image;
     }
     int size = sizeof(images)/sizeof(images[0]);
@@ -49,10 +50,10 @@ int main()
     {
         if(images[i].data)
         {
-           images[i] = blurImage(images[i]);
+           //images[i] = blurImage(images[i]);
            //images[i] = filterImage(images[i]);
            //images[i] = blobDetection(images[i]);
-           images[i] = edgeDetection(images[i]);
+           //images[i] = edgeDetection(images[i]);
            //images[i] = barrelDetection(images[i]);
            images[i] = detectFaces(images[i]);
            //images[i] = detectPeople(images[i]);
@@ -84,6 +85,10 @@ char* getImageSet(int set)
     else if(set == 3)
     {
         image_name = "me_eating_cereal.jpg";
+    }
+    else if(set == 4)
+    {
+        image_name = "C:\\Users\\Sean\\Pictures\\OpenCV Tests/image%d.jpg";
     }
     return image_name;
 }

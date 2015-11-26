@@ -47,47 +47,45 @@
             <pElem>C:/opencv/build/include</pElem>
           </incDir>
         </ccTool>
+        <asmTool>
+          <architecture>1</architecture>
+        </asmTool>
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/optical-security-threat-detection</output>
           <linkerAddLib>
-            <pElem>../../../../../opencv/release/lib</pElem>
+            <pElem>../../../../opencv/debug/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>opencv_calib3d300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_calib3d_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_core300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_core_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_features2d300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_features2d_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_flann300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_flann_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_hal300</linkerLibLibItem>
-            <linkerLibLibItem>opencv_hal_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_highgui300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_highgui_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgcodecs300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgcodecs_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgproc300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgproc_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ml300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ml_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_objdetect300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_objdetect_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_photo300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_photo_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_shape300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_shape_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_stitching300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_superres300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_superres_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ts300</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ts_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_video300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_video_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videoio300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videoio_pch_dephelp</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videostab300.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videostab_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_calib3d300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_calib3d_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_core300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_core_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_features2d300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_features2d_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_flann300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_flann_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_hal300d</linkerLibLibItem>
+            <linkerLibLibItem>opencv_hal_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgcodecs300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgcodecs_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgproc300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgproc_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_ml300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_ml_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_objdetect300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_objdetect_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_photo300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_photo_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_shape300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_shape_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_stitching300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_stitching_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_superres300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_superres_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_video300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_video_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_videostab300d.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_videostab_pch_dephelpd</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -123,10 +121,11 @@
         </fortranCompilerTool>
         <asmTool>
           <developmentMode>5</developmentMode>
+          <architecture>1</architecture>
         </asmTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>../../../../../opencv/release/lib</pElem>
+            <pElem>../../../../opencv/release/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>opencv_calib3d300.dll</linkerLibLibItem>
@@ -222,8 +221,8 @@
         </asmTool>
         <linkerTool>
           <linkerAddLib>
-            <pElem>../../../../opencv/debug/lib</pElem>
-            <pElem>../../../../opencv/release/lib</pElem>
+            <pElem>C:/opencv/debug/lib</pElem>
+            <pElem>C:/opencv/release/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
             <linkerLibLibItem>opencv_calib3d300d.dll</linkerLibLibItem>
@@ -261,6 +260,7 @@
             <linkerLibLibItem>opencv_videostab_pch_dephelpd</linkerLibLibItem>
             <linkerLibLibItem>opencv_videoio300.dll</linkerLibLibItem>
             <linkerLibLibItem>opencv_videoio_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_calib3d300d.dll</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
@@ -291,42 +291,71 @@
         <linkerTool>
           <output>${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/optical-security-threat-detection</output>
           <linkerAddLib>
-            <pElem>../../../../opencv/debug/lib</pElem>
+            <pElem>../../../../opencv/release/lib</pElem>
           </linkerAddLib>
           <linkerLibItems>
-            <linkerLibLibItem>opencv_calib3d300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_calib3d_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_core300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_core_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_features2d300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_features2d_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_flann300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_flann_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_hal300d</linkerLibLibItem>
-            <linkerLibLibItem>opencv_hal_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_highgui_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgcodecs300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgcodecs_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgproc300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_imgproc_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ml300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ml_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_objdetect300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_objdetect_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_photo300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_photo_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_shape300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_shape_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_stitching300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_stitching_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_superres300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_superres_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_ts_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_video300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_video_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videoio_pch_dephelpd</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videostab300d.dll</linkerLibLibItem>
-            <linkerLibLibItem>opencv_videostab_pch_dephelpd</linkerLibLibItem>
+            <linkerLibLibItem>opencv_calib3d300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_calib3d_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_core300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_core_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_features2d300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_features2d_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_flann300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_flann_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_hal300</linkerLibLibItem>
+            <linkerLibLibItem>opencv_hal_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_highgui300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_highgui_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgcodecs300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgcodecs_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgproc300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_imgproc_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_ml300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_ml_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_objdetect300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_objdetect_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_calib3d_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_core_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_features2d_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_imgcodecs_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_imgproc_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_objdetect_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_photo_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_stitching_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_superres_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_video_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_perf_videoio_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_photo300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_photo_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_shape300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_shape_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_stitching300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_stitching_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_superres300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_superres_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_calib3d_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_core_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_features2d_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_flann_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_highgui_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_imgcodecs_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_imgproc_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_ml_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_objdetect_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_photo_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_shape_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_stitching_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_superres_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_video_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_test_videoio_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_ts300</linkerLibLibItem>
+            <linkerLibLibItem>opencv_ts_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_video300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_video_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_videoio300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_videoio_pch_dephelp</linkerLibLibItem>
+            <linkerLibLibItem>opencv_videostab300.dll</linkerLibLibItem>
+            <linkerLibLibItem>opencv_videostab_pch_dephelp</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
       </compileType>
