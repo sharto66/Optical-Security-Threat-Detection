@@ -20,6 +20,7 @@ Mat blurImage(Mat src);
 Mat detectPeople(Mat src);
 Mat generalisedHough(Mat src);
 Mat detectFaces(Mat src);
+Mat cornerDetection(Mat src);
 char* getImageSet(int set);
 
 int main()
@@ -50,12 +51,13 @@ int main()
     {
         if(images[i].data)
         {
-           //images[i] = blurImage(images[i]);
+           images[i] = blurImage(images[i]);
            //images[i] = filterImage(images[i]);
            //images[i] = blobDetection(images[i]);
-           //images[i] = edgeDetection(images[i]);
-           //images[i] = barrelDetection(images[i]);
-           images[i] = detectFaces(images[i]);
+           images[i] = edgeDetection(images[i]);
+           images[i] = barrelDetection(images[i]);
+           //images[i] = cornerDetection(images[i]);
+           //images[i] = detectFaces(images[i]);
            //images[i] = detectPeople(images[i]);
            //generalisedHough(images[i]);
            namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
