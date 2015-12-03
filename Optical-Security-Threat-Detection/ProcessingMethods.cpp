@@ -10,7 +10,8 @@ using namespace std;
 using namespace cv;
 
 float getSlope(Point p1, Point p2);
-Rect getRect(Point p1, Point p2);
+Rect getRect(Point p1);
+bool cornerDetected(Mat harris, Point p);
 
 int MAX_KERNEL_LENGTH = 31;
 int GAUSSIAN_KERNEL = 6;
@@ -69,6 +70,23 @@ Mat blobDetection(Mat src)
     return dst;
 }
 
+bool cornerDetected(Mat src, Point p1)
+{
+    for(int j = 0; j < src.rows ; j++)
+    {
+        for(int i = 0; i < src.cols; i++ )
+        {
+            if((int) src.at<float>(j,i) > 150)
+            {
+                Point p2 = Point(i, j);
+                Rect r = getRect(p2);
+                if(r.contains(p1)) return true;
+                else return false;
+            }
+        }
+    }
+}
+
 Mat cornerDetection(Mat src)
 {
     Mat dst;
@@ -93,22 +111,29 @@ Mat barrelDetection(Mat src)
     Mat hough, harris, dst;
     cvtColor(src, dst, CV_GRAY2BGR);
     std::vector<Vec4i> lines;
-    HoughLinesP(src, lines, 1, CV_PI/180, 10, 5, 1);
-//    cornerHarris(src, harris, 3, 5, 0.1, BORDER_DEFAULT);
-//    normalize(dst, dst, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
+    HoughLinesP(src, lines, 1, CV_PI/180, 10, 1, 0.5);
+    cornerHarris(src, harris, 3, 5, 0.1, BORDER_DEFAULT);
+    normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
     for(int i = 0; i < lines.size(); i++)
     {
-        for(int j = 1; j < lines.size(); j++)
+        Point p1 = Point(lines[i][0], lines[i][1]);
+        Point p2 = Point(lines[i][2], lines[i][3]);
+        Rect r1 = getRect(p1);
+        Rect r2 = getRect(p2);
+        for(int j = i+1; j < lines.size(); j++)
         {
-            Point p1 = Point(lines[i][0], lines[i][1]);
-            Point p2 = Point(lines[i][2], lines[i][3]);
             Point p3 = Point(lines[j][0], lines[j][1]);
             Point p4 = Point(lines[j][2], lines[j][3]);
-            Rect r = getRect(p1, p2);
-            if(getSlope(p1, p2) == getSlope(p3, p4) && p3.inside(r) && p4.inside(r));
-            {
-                rectangle(dst, r.tl(), r.br(), Scalar(0,255,0), 1);
-                line(dst, Point(lines[i][0], lines[i][1]), Point(lines[i][2], lines[i][3]), Scalar(0,0,255), 1, 8);
+            float slope1 = getSlope(p1, p2);
+            float slope2 = getSlope(p3, p4);
+            if(slope1 == slope2){
+                if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
+                    if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
+//                    rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
+//                    rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
+                        line(dst, p1, p2, Scalar(0,0,255), 1, 8);
+                    }
+                }
             }
         }
     }
@@ -125,19 +150,22 @@ float getSlope(Point p1, Point p2)
     return slope;
 }
 
-Rect getRect(Point p1, Point p2)
+Rect getRect(Point p1)
 {
     Rect r;
-    int pad = 3;
+    int pad = 5;
     
-    r.x = p1.x - pad;
-    r.y = p1.y + pad;
+//    if(p1.x > p2.x) r.width = (p1.x - p2.x) + pad;
+//    else    r.width = (p2.x - p1.x) + pad;
+//    
+//    if(p1.y > p2.y) r.height = (p1.y - p2.y) + pad;
+//    else    r.height = (p2.y - p1.y) + pad;
     
-    if(p1.x > p2.x) r.width = (p1.x - p2.x) + pad;
-    else    r.width = (p2.x - p1.x) + pad;
+    r.width = 20;
+    r.height= 20;
     
-    if(p1.y > p2.y) r.height = (p1.y - p2.y) + pad;
-    else    r.height = (p2.y - p1.y) + pad;
+    r.x = p1.x - r.width/2;
+    r.y = p1.y - r.height/2;
     
     return r;
 }
@@ -147,7 +175,7 @@ Mat lineDetect(Mat src)
     Mat dst;
     cvtColor(src, dst, CV_GRAY2BGR);
     std::vector<Vec4i> lines;
-    cv::HoughLinesP(src, lines, 1, CV_PI/180, 10, 5, 1);
+    cv::HoughLinesP(src, lines, 1, CV_PI/180, 10, 1.75, 2);
     cout << lines.size() << endl;
     for(int i = 0; i < lines.size(); i++)
     {
