@@ -55,10 +55,10 @@ int main()
            images[i] = blurImage(images[i]);
            //images[i] = filterImage(images[i]);
            //images[i] = blobDetection(images[i]);
-           //images[i] = edgeDetection(images[i]);
-           //images[i] = barrelDetection(images[i]);
+           images[i] = edgeDetection(images[i]);
+           images[i] = barrelDetection(images[i]);
            //images[i] = lineDetect(images[i]);
-           images[i] = cornerDetection(images[i]);
+           //images[i] = cornerDetection(images[i]);
            //images[i] = detectFaces(images[i]);
            //images[i] = detectPeople(images[i]);
            //generalisedHough(images[i]);

@@ -35,6 +35,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/BarrelDetection.o \
 	${OBJECTDIR}/InputImage.o \
 	${OBJECTDIR}/ProcessingMethods.o \
 	${OBJECTDIR}/main.o
@@ -63,6 +64,11 @@ LDLIBSOPTIONS=-L../../../../opencv/release/lib -lopencv_calib3d300.dll -lopencv_
 ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/optical-security-threat-detection.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/optical-security-threat-detection ${OBJECTFILES} ${LDLIBSOPTIONS}
+
+${OBJECTDIR}/BarrelDetection.o: BarrelDetection.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/C/opencv/build/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/BarrelDetection.o BarrelDetection.cpp
 
 ${OBJECTDIR}/InputImage.o: InputImage.cpp 
 	${MKDIR} -p ${OBJECTDIR}

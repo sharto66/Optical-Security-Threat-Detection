@@ -13,6 +13,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>BarrelDetection.cpp</itemPath>
       <itemPath>InputImage.cpp</itemPath>
       <itemPath>ProcessingMethods.cpp</itemPath>
       <itemPath>main.cpp</itemPath>
@@ -89,6 +90,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.h" ex="false" tool="3" flavor2="0">
@@ -193,6 +196,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.h" ex="false" tool="3" flavor2="0">
@@ -264,6 +269,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.h" ex="false" tool="3" flavor2="0">
@@ -359,6 +366,8 @@
           </linkerLibItems>
         </linkerTool>
       </compileType>
+      <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="InputImage.h" ex="false" tool="3" flavor2="0">
