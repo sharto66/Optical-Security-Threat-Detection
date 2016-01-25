@@ -11,9 +11,11 @@ Rect getRect(Point p);
 bool cornerDetected(Mat harris, Point p);
 bool slopeMatch(float s1, float s2);
 bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
+Mat rotate(Mat src);
 
 Mat barrelDetection(Mat src)
 {
+    //src = rotate(src);
     Mat hough, harris, dst;
     cvtColor(src, dst, CV_GRAY2BGR);
     std::vector<Vec4i> lines;
@@ -114,4 +116,28 @@ Rect getRect(Point p)
     r.y = p.y - r.height/2;
     
     return r;
+}
+
+Mat rotate(Mat src)
+{
+    double angle = -20.00f;
+    Point2f center(src.cols/2.0, src.rows/2.0);
+    Mat rot = getRotationMatrix2D(center, angle, 1.0);
+    Rect bbox = RotatedRect(center,src.size(), angle).boundingRect();
+    rot.at<double>(0,2) += bbox.width/2.0 - center.x;
+    rot.at<double>(1,2) += bbox.height/2.0 - center.y;
+    cv::warpAffine(src, src, rot, bbox.size());
+    return src;
+}
+
+bool endToEnd(Point p1, Point p2, Point p3, Point p4)
+{
+    if(p1.x == p3.x || p1.x == p4.x || p2.x == p3.x || p2.x == p4.x){
+        return true;
+    }
+    else if(p1.y == p3.y || p1.y == p4.y || p2.y == p3.y || p2.y == p4.y){
+        return true;
+    }
+    else return false;
+              
 }
