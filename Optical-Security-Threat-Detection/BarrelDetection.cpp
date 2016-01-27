@@ -8,10 +8,11 @@ using namespace cv;
 
 float getSlope(Point p1, Point p2);
 Rect getRect(Point p);
+Mat rotate(Mat src);
 bool cornerDetected(Mat harris, Point p);
 bool slopeMatch(float s1, float s2);
 bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
-Mat rotate(Mat src);
+bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 
 Mat barrelDetection(Mat src)
 {
@@ -36,8 +37,7 @@ Mat barrelDetection(Mat src)
             float slope2 = getSlope(p3, p4);
             if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4)){
                 if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
-                    if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
-//                        add in new checking functionality to stop marking lines end to end to each other
+                    if(cornerDetected(harris, p1) || cornerDetected(harris, p2) && endToEnd(p1, p2, p3, p4)){
 //                        rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
 //                        rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
                         line(dst, p1, p2, Scalar(0,0,255), 1, 8);
@@ -130,14 +130,14 @@ Mat rotate(Mat src)
     return src;
 }
 
+//function needs to be be re implemented to allow variances
 bool endToEnd(Point p1, Point p2, Point p3, Point p4)
 {
     if(p1.x == p3.x || p1.x == p4.x || p2.x == p3.x || p2.x == p4.x){
-        return true;
+        return false;
     }
     else if(p1.y == p3.y || p1.y == p4.y || p2.y == p3.y || p2.y == p4.y){
-        return true;
+        return false;
     }
-    else return false;
-              
+    else return true;
 }
