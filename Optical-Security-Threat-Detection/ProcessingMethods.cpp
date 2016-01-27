@@ -85,8 +85,6 @@ Mat cornerDetection(Mat src)
     return src;
 }
 
-
-
 Mat lineDetect(Mat src)
 {
     Mat dst;

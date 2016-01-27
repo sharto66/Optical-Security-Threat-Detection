@@ -16,32 +16,37 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 
 Mat barrelDetection(Mat src)
 {
-    //src = rotate(src);
     Mat hough, harris, dst;
     cvtColor(src, dst, CV_GRAY2BGR);
     std::vector<Vec4i> lines;
     HoughLinesP(src, lines, 0.1, CV_PI/180, 20, 1, 0.00);
     cornerHarris(src, harris, 3, 5, 0.1, BORDER_DEFAULT);
     normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
-    for(int i = 0; i < lines.size(); i++)
+    Point p1, p2, p3, p4;
+    Rect r1, r2;
+    for(int i = 0; i < 360; i++)
     {
-        Point p1 = Point(lines[i][0], lines[i][1]);
-        Point p2 = Point(lines[i][2], lines[i][3]);
-        Rect r1 = getRect(p1);
-        Rect r2 = getRect(p2);
-        float slope1 = getSlope(p1, p2);
-        for(int j = i+1; j < lines.size(); j++)
+        src = rotate(src);
+        for(int i = 0; i < lines.size(); i++)
         {
-            Point p3 = Point(lines[j][0], lines[j][1]);
-            Point p4 = Point(lines[j][2], lines[j][3]);
-            float slope2 = getSlope(p3, p4);
-            if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4)){
-                if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
-                    if(cornerDetected(harris, p1) || cornerDetected(harris, p2) && endToEnd(p1, p2, p3, p4)){
-//                        rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
-//                        rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
-                        line(dst, p1, p2, Scalar(0,0,255), 1, 8);
-                        line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+            p1 = Point(lines[i][0], lines[i][1]);
+            p2 = Point(lines[i][2], lines[i][3]);
+            r1 = getRect(p1);
+            r2 = getRect(p2);
+            float slope1 = getSlope(p1, p2);
+            for(int j = i+1; j < lines.size(); j++)
+            {
+                p3 = Point(lines[j][0], lines[j][1]);
+                p4 = Point(lines[j][2], lines[j][3]);
+                float slope2 = getSlope(p3, p4);
+                if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4)){
+                    if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
+                        if(cornerDetected(harris, p1) || cornerDetected(harris, p2) && endToEnd(p1, p2, p3, p4)){
+    //                        rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
+    //                        rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
+                            line(dst, p1, p2, Scalar(0,0,255), 1, 8);
+                            line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+                        }
                     }
                 }
             }
@@ -120,7 +125,7 @@ Rect getRect(Point p)
 
 Mat rotate(Mat src)
 {
-    double angle = -20.00f;
+    double angle = -1.00f;
     Point2f center(src.cols/2.0, src.rows/2.0);
     Mat rot = getRotationMatrix2D(center, angle, 1.0);
     Rect bbox = RotatedRect(center,src.size(), angle).boundingRect();
