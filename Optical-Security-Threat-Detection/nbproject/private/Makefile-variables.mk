@@ -7,3 +7,4 @@
 # Release configuration
 # Debug configuration
 # Copy_of_Debug configuration
+# Release64 configuration

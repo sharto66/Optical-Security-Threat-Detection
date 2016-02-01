@@ -38,6 +38,14 @@ CND_ARTIFACT_PATH_Copy_of_Debug=dist/Copy_of_Debug/MinGW-Windows/optical-securit
 CND_PACKAGE_DIR_Copy_of_Debug=dist/Copy_of_Debug/MinGW-Windows/package
 CND_PACKAGE_NAME_Copy_of_Debug=optical-security-threat-detection.tar
 CND_PACKAGE_PATH_Copy_of_Debug=dist/Copy_of_Debug/MinGW-Windows/package/optical-security-threat-detection.tar
+# Release64 configuration
+CND_PLATFORM_Release64=MinGW_1-Windows
+CND_ARTIFACT_DIR_Release64=dist/Release64/MinGW_1-Windows
+CND_ARTIFACT_NAME_Release64=optical-security-threat-detection
+CND_ARTIFACT_PATH_Release64=dist/Release64/MinGW_1-Windows/optical-security-threat-detection
+CND_PACKAGE_DIR_Release64=dist/Release64/MinGW_1-Windows/package
+CND_PACKAGE_NAME_Release64=optical-security-threat-detection.tar
+CND_PACKAGE_PATH_Release64=dist/Release64/MinGW_1-Windows/package/optical-security-threat-detection.tar
 #
 # include compiler specific variables
 #

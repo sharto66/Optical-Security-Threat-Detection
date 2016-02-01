@@ -7,7 +7,7 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "InputImage.h"
 
-#define NUM 2
+#define NUM 1
 
 using namespace std;
 using namespace cv;

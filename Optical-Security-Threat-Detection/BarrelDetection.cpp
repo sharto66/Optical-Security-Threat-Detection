@@ -8,7 +8,7 @@ using namespace cv;
 
 float getSlope(Point p1, Point p2);
 Rect getRect(Point p);
-Mat rotate(Mat src);
+Mat rotate(Mat src, float angle);
 bool cornerDetected(Mat harris, Point p);
 bool slopeMatch(float s1, float s2);
 bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
@@ -16,17 +16,20 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 
 Mat barrelDetection(Mat src)
 {
-    Mat hough, harris, dst;
+    Mat img, hough, harris, dst;
     cvtColor(src, dst, CV_GRAY2BGR);
     std::vector<Vec4i> lines;
-    HoughLinesP(src, lines, 0.1, CV_PI/180, 20, 1, 0.00);
-    cornerHarris(src, harris, 3, 5, 0.1, BORDER_DEFAULT);
-    normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
     Point p1, p2, p3, p4;
     Rect r1, r2;
-    for(int i = 0; i < 360; i++)
+    for(int i = 0; i < 90; i++)
     {
-        src = rotate(src);
+        img = rotate(src, i);
+        dst = rotate(dst, i);
+        //imshow(to_string(i), img);
+        cout << "rotated " + to_string(i) + " degree" << endl;
+        HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 1, 0.00);
+        cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
+        normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
         for(int i = 0; i < lines.size(); i++)
         {
             p1 = Point(lines[i][0], lines[i][1]);
@@ -52,6 +55,7 @@ Mat barrelDetection(Mat src)
             }
         }
     }
+    cv::flip(dst, dst, -1);
     return dst;
 }
 
@@ -85,7 +89,6 @@ float getSlope(Point p1, Point p2)
 bool slopeMatch(float s1, float s2)
 {
     float var = 0.04;
-    
     if(s1 == s2) return true;
     else if(s1 > s2){
         float diff = s1 - s2;
@@ -123,7 +126,7 @@ Rect getRect(Point p)
     return r;
 }
 
-Mat rotate(Mat src)
+Mat rotate1(Mat src)
 {
     double angle = -1.00f;
     Point2f center(src.cols/2.0, src.rows/2.0);
@@ -132,6 +135,21 @@ Mat rotate(Mat src)
     rot.at<double>(0,2) += bbox.width/2.0 - center.x;
     rot.at<double>(1,2) += bbox.height/2.0 - center.y;
     cv::warpAffine(src, src, rot, bbox.size());
+    rot.release();
+    return src;
+}
+
+Mat rotate(Mat src, float angle)
+{
+    Point2f center;
+    center = Point2f(src.cols/2.0, src.rows/2.0);
+    Mat rot = getRotationMatrix2D(center, angle, 1.0);
+    Rect bbox;
+    bbox = RotatedRect(center,src.size(), angle).boundingRect();
+    rot.at<double>(0,2) += bbox.width/2.0 - center.x;
+    rot.at<double>(1,2) += bbox.height/2.0 - center.y;
+    cv::warpAffine(src, src, rot, bbox.size());
+    rot.release();
     return src;
 }
 
