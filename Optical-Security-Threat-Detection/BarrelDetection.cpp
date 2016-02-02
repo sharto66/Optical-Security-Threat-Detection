@@ -9,6 +9,7 @@ using namespace cv;
 float getSlope(Point p1, Point p2);
 Rect getRect(Point p);
 Mat rotate(Mat src, float angle);
+CV_EXPORTS_W void drawLines(Mat img, vector<Point> points);
 bool cornerDetected(Mat harris, Point p);
 bool slopeMatch(float s1, float s2);
 bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
@@ -16,16 +17,17 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 
 Mat barrelDetection(Mat src)
 {
-    Mat img, hough, harris, dst;
+    Mat img, harris, dst, dstCopy;
     cvtColor(src, dst, CV_GRAY2BGR);
+    cvtColor(src, dstCopy, CV_GRAY2BGR);
+    std::vector<Point> points;
     std::vector<Vec4i> lines;
     Point p1, p2, p3, p4;
     Rect r1, r2;
     for(int i = 0; i < 90; i++)
     {
         img = rotate(src, i);
-        dst = rotate(dst, i);
-        //imshow(to_string(i), img);
+        dst = rotate(dstCopy, i);
         cout << "rotated " + to_string(i) + " degree" << endl;
         HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 1, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
@@ -45,17 +47,21 @@ Mat barrelDetection(Mat src)
                 if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2) && endToEnd(p1, p2, p3, p4)){
-    //                        rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
-    //                        rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
+//                            rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
+//                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
                             line(dst, p1, p2, Scalar(0,0,255), 1, 8);
                             line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+//                            points.push_back(p1);
+//                            points.push_back(p2);
+//                            points.push_back(p3);
+//                            points.push_back(p4);
                         }
                     }
                 }
             }
         }
     }
-    cv::flip(dst, dst, -1);
+    cv::flip(dst.t(), dst, 1);
     return dst;
 }
 
@@ -126,26 +132,11 @@ Rect getRect(Point p)
     return r;
 }
 
-Mat rotate1(Mat src)
-{
-    double angle = -1.00f;
-    Point2f center(src.cols/2.0, src.rows/2.0);
-    Mat rot = getRotationMatrix2D(center, angle, 1.0);
-    Rect bbox = RotatedRect(center,src.size(), angle).boundingRect();
-    rot.at<double>(0,2) += bbox.width/2.0 - center.x;
-    rot.at<double>(1,2) += bbox.height/2.0 - center.y;
-    cv::warpAffine(src, src, rot, bbox.size());
-    rot.release();
-    return src;
-}
-
 Mat rotate(Mat src, float angle)
 {
-    Point2f center;
-    center = Point2f(src.cols/2.0, src.rows/2.0);
+    Point2f center = Point2f(src.cols/2.0, src.rows/2.0);
+    Rect bbox = RotatedRect(center,src.size(), angle).boundingRect();
     Mat rot = getRotationMatrix2D(center, angle, 1.0);
-    Rect bbox;
-    bbox = RotatedRect(center,src.size(), angle).boundingRect();
     rot.at<double>(0,2) += bbox.width/2.0 - center.x;
     rot.at<double>(1,2) += bbox.height/2.0 - center.y;
     cv::warpAffine(src, src, rot, bbox.size());
@@ -163,4 +154,13 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4)
         return false;
     }
     else return true;
+}
+
+CV_EXPORTS_W void drawLines(Mat img, vector<Point> points)
+{
+    for(int i = 0; i < points.size()-3; i++)
+    {
+        line(img, points.at(i), points.at(i+1), Scalar(0,0,255), 1, 8);
+        line(img, points.at(i+2), points.at(i+3), Scalar(0,255,0), 1, 8);
+    }
 }
