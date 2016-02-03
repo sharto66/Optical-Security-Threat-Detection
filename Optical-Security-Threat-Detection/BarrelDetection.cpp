@@ -24,7 +24,7 @@ Mat barrelDetection(Mat src)
     std::vector<Vec4i> lines;
     Point p1, p2, p3, p4;
     Rect r1, r2;
-    for(int i = 0; i < 90; i++)
+    for(int i = 0; i < 45; i++)
     {
         img = rotate(src, i);
         dst = rotate(dstCopy, i);
@@ -134,6 +134,7 @@ Rect getRect(Point p)
 
 Mat rotate(Mat src, float angle)
 {
+    angle *= 2;
     Point2f center = Point2f(src.cols/2.0, src.rows/2.0);
     Rect bbox = RotatedRect(center,src.size(), angle).boundingRect();
     Mat rot = getRotationMatrix2D(center, angle, 1.0);

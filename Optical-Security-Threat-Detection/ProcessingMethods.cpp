@@ -37,6 +37,16 @@ Mat blurImage(Mat src)
     return src;
 }
 
+Mat thresholdImage(Mat src)
+{
+    int threshold_value = 180;
+    int threshold_type = 3;
+    int const max_BINARY_value = 255;
+    cvtColor(src, src, CV_BGR2GRAY);
+    cv::threshold(src, src, threshold_value, max_BINARY_value, THRESH_TOZERO);
+    return src;
+}
+
 Mat blobDetection(Mat src)
 {
     Mat dst;
@@ -105,34 +115,6 @@ Mat edgeDetection(Mat src)
     Canny(src, edge, 50, 150, 3);
     edge.convertTo(dst, CV_8U);
     return dst;
-}
-
-Mat generalisedHough(Mat src)
-{
-    Mat templ = imread("C:\\Users\\Sean\\Pictures/pistol.jpg", IMREAD_GRAYSCALE);
-    vector<Vec4f> position;
-    
-    Ptr<GeneralizedHoughGuil> hough = createGeneralizedHoughGuil();
-
-    hough->setMinDist(100);
-    hough->setLevels(360);
-    hough->setDp(2);
-    hough->setMaxBufferSize(1000);
-    hough->setMinAngle(0);
-    hough->setMaxAngle(360);
-    hough->setMinScale(0.2);
-    hough->setMaxScale(3);
-    hough->setAngleStep(1);
-    hough->setAngleThresh(10000);
-    hough->setScaleStep(0.05);
-    hough->setScaleThresh(1000);
-    hough->setPosThresh(100);
-    
-    hough->setTemplate(templ);
-    
-    hough->detect(src, position);
-    
-    cout << "Found : " << position.size() << " objects" << endl;
 }
 
 Mat detectPeople(Mat src)
