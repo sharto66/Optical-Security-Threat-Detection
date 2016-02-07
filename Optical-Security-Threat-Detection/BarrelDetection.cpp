@@ -29,7 +29,7 @@ Mat barrelDetection(Mat src)
         img = rotate(src, i);
         dst = rotate(dstCopy, i);
         cout << "rotated " + to_string(i) + " degree" << endl;
-        HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 1, 0.00);
+        HoughLinesP(img, lines, 0.1, CV_PI/180, 30, 9, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
         for(int i = 0; i < lines.size(); i++)
@@ -44,9 +44,9 @@ Mat barrelDetection(Mat src)
                 p3 = Point(lines[j][0], lines[j][1]);
                 p4 = Point(lines[j][2], lines[j][3]);
                 float slope2 = getSlope(p3, p4);
-                if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4)){
+                if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4) && endToEnd(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
-                        if(cornerDetected(harris, p1) || cornerDetected(harris, p2) && endToEnd(p1, p2, p3, p4)){
+                        if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
 //                            rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
 //                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
                             line(dst, p1, p2, Scalar(0,0,255), 1, 8);
@@ -122,7 +122,7 @@ bool lengthMatch(Point p1, Point p2, Point p3, Point p4)
 Rect getRect(Point p)
 {
     Rect r;
-    int pad = 20;
+    int pad = 40;
     
     r.width = pad;
     r.height = pad;
@@ -146,12 +146,43 @@ Mat rotate(Mat src, float angle)
 }
 
 //function needs to be be re implemented to allow variances
-bool endToEnd(Point p1, Point p2, Point p3, Point p4)
+bool endToEnd1(Point p1, Point p2, Point p3, Point p4)
 {
     if(p1.x == p3.x || p1.x == p4.x || p2.x == p3.x || p2.x == p4.x){
         return false;
     }
     else if(p1.y == p3.y || p1.y == p4.y || p2.y == p3.y || p2.y == p4.y){
+        return false;
+    }
+    else return true;
+}
+
+//function needs to be be re implemented to allow variances
+bool endToEnd(Point p1, Point p2, Point p3, Point p4)
+{
+    float var = 4;
+    if(p1.x <= p3.x+var && p1.x >= p3.x-var){
+        return false;
+    }
+    else if(p1.x <= p4.x+var && p1.x >= p4.x-var){
+        return false;
+    }
+    else if(p2.x <= p3.x+var && p2.x >= p3.x-var){
+        return false;
+    }
+    else if(p2.x <= p4.x+var && p2.x >= p4.x-var){
+        return false;
+    }
+    else if(p1.y <= p3.y+var && p1.y >= p3.y-var){
+        return false;
+    }
+    else if(p1.y <= p4.y+var && p1.y >= p4.y-var){
+        return false;
+    }
+    else if(p2.y <= p3.y+var && p2.y >= p3.y-var){
+        return false;
+    }
+    else if(p2.y <= p4.y+var && p2.y >= p4.y-var){
         return false;
     }
     else return true;

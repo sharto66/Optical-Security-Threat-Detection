@@ -43,7 +43,7 @@ Mat thresholdImage(Mat src)
     int threshold_type = 3;
     int const max_BINARY_value = 255;
     cvtColor(src, src, CV_BGR2GRAY);
-    cv::threshold(src, src, threshold_value, max_BINARY_value, THRESH_TOZERO);
+    cv::threshold(src, src, threshold_value, max_BINARY_value, THRESH_BINARY);
     return src;
 }
 

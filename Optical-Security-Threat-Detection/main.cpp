@@ -4,25 +4,13 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
-#include "opencv2/highgui/highgui.hpp"
 #include "InputImage.h"
+#include "opticalsecurity.h"
 
-#define NUM 1
+#define NUM 2
 
 using namespace std;
 using namespace cv;
-
-Mat thresholdImage(Mat src);
-Mat filterImage(Mat src);
-Mat blobDetection(Mat src);
-Mat edgeDetection(Mat src);
-Mat barrelDetection(Mat src);
-Mat blurImage(Mat src);
-Mat detectPeople(Mat src);
-Mat detectFaces(Mat src);
-Mat cornerDetection(Mat src);
-Mat lineDetect(Mat src);
-char* getImageSet(int set);
 
 int main()
 {
@@ -55,8 +43,8 @@ int main()
            images[i] = blurImage(images[i]);
            //images[i] = filterImage(images[i]);
            //images[i] = blobDetection(images[i]);
-           //images[i] = thresholdImage(images[i]);
-           images[i] = edgeDetection(images[i]);
+           images[i] = thresholdImage(images[i]);
+           //images[i] = edgeDetection(images[i]);
            images[i] = barrelDetection(images[i]);
            //images[i] = lineDetect(images[i]);
            //images[i] = cornerDetection(images[i]);
