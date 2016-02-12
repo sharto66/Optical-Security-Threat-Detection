@@ -29,7 +29,7 @@ Mat barrelDetection(Mat src)
         img = rotate(src, i);
         dst = rotate(dstCopy, i);
         cout << "rotated " + to_string(i) + " degree" << endl;
-        HoughLinesP(img, lines, 0.1, CV_PI/180, 30, 9, 0.00);
+        HoughLinesP(img, lines, 0.1, CV_PI/180, 30, 7, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
         for(int i = 0; i < lines.size(); i++)
@@ -160,7 +160,7 @@ bool endToEnd1(Point p1, Point p2, Point p3, Point p4)
 //function needs to be be re implemented to allow variances
 bool endToEnd(Point p1, Point p2, Point p3, Point p4)
 {
-    float var = 4;
+    float var = 2;
     if(p1.x <= p3.x+var && p1.x >= p3.x-var){
         return false;
     }

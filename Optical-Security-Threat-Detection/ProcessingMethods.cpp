@@ -21,7 +21,7 @@ CascadeClassifier body_cascade;
 Mat filterImage(Mat src)
 {
     Mat dst;
-    for ( int j = 1; j < MAX_KERNEL_LENGTH; j = j + 2 )
+    for (int j = 1; j < MAX_KERNEL_LENGTH; j = j + 2)
     {
         bilateralFilter(src, dst, j, j*2, j/2);
     }
@@ -39,12 +39,24 @@ Mat blurImage(Mat src)
 
 Mat thresholdImage(Mat src)
 {
-    int threshold_value = 180;
-    int threshold_type = 3;
+    int threshold_value = 200;
     int const max_BINARY_value = 255;
     cvtColor(src, src, CV_BGR2GRAY);
-    cv::threshold(src, src, threshold_value, max_BINARY_value, THRESH_BINARY);
+    cv::threshold(src, src, threshold_value, max_BINARY_value, THRESH_BINARY_INV);
     return src;
+}
+
+Mat colourThreshold(Mat src)
+{
+    Mat channels[3];
+    split(src, channels);
+    int low = 10;
+    int high = 150;
+    Mat blue = (channels[0] < low) | (channels[0] > high);
+    Mat green = (channels[1] < low) | (channels[1] > high);
+    Mat red = (channels[2] < low) | (channels[2] > high);
+    Mat dst = red & green & blue;
+    return dst;
 }
 
 Mat blobDetection(Mat src)

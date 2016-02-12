@@ -7,7 +7,7 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 2
+#define NUM 5
 
 using namespace std;
 using namespace cv;
@@ -43,9 +43,10 @@ int main()
            images[i] = blurImage(images[i]);
            //images[i] = filterImage(images[i]);
            //images[i] = blobDetection(images[i]);
-           images[i] = thresholdImage(images[i]);
+           images[i] = colourThreshold(images[i]);
+           //images[i] = thresholdImage(images[i]);
            //images[i] = edgeDetection(images[i]);
-           images[i] = barrelDetection(images[i]);
+           //images[i] = barrelDetection(images[i]);
            //images[i] = lineDetect(images[i]);
            //images[i] = cornerDetection(images[i]);
            //images[i] = detectFaces(images[i]);
@@ -67,20 +68,16 @@ int main()
 char* getImageSet(int set)
 {
     char* image_name;
-    if(set == 1)
-    {
+    if(set == 1) {
         image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
     }
-    else if(set == 2)
-    {
+    else if(set == 2) {
         image_name = "C:\\Users\\Sean\\Pictures\\guns/image%d.jpg";
     }
-    else if(set == 3)
-    {
+    else if(set == 3) {
         image_name = "me_eating_cereal.jpg";
     }
-    else if(set == 4)
-    {
+    else if(set == 4) {
         image_name = "C:\\Users\\Sean\\Pictures\\OpenCV Tests/image%d.jpg";
     }
     return image_name;
