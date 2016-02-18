@@ -46,17 +46,34 @@ Mat thresholdImage(Mat src)
     return src;
 }
 
-Mat colourThreshold(Mat src)
+Mat colourThreshold1(Mat src)
 {
     Mat channels[3];
     split(src, channels);
     int low = 10;
-    int high = 150;
+    int high = 100;
     Mat blue = (channels[0] < low) | (channels[0] > high);
     Mat green = (channels[1] < low) | (channels[1] > high);
     Mat red = (channels[2] < low) | (channels[2] > high);
     Mat dst = red & green & blue;
     return dst;
+}
+
+Mat colourThreshold(Mat src)
+{
+    Mat channels[3];
+    cvtColor(src, src, CV_BGR2HSV);
+    split(src, channels);
+    int low = 16;
+    int high = 100;
+    Mat hue = (channels[0] < 0) | (channels[0] > 0);
+    Mat sat = (channels[1] < 0) | (channels[1] > 7);
+    Mat val = (channels[2] < low) | (channels[2] > high);
+    Mat dst = hue & sat & val;
+    cv::threshold(dst, dst, 1, 255, THRESH_OTSU);
+    cv::threshold(sat, sat, 1, 255, THRESH_OTSU);
+    cv::threshold(val, val, 1, 255, THRESH_OTSU + CV_THRESH_BINARY);
+    return val;
 }
 
 Mat blobDetection(Mat src)
