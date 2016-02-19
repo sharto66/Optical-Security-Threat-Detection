@@ -7,3 +7,4 @@ Prototype 1 Features:
   2. Canny Edge Detector
   3. Face detection
   4. Barrel detection
+  5. InputImage class
