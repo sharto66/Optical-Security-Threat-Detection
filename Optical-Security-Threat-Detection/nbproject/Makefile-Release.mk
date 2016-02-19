@@ -37,6 +37,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 OBJECTFILES= \
 	${OBJECTDIR}/BarrelDetection.o \
 	${OBJECTDIR}/InputImage.o \
+	${OBJECTDIR}/MagazineDetection.o \
 	${OBJECTDIR}/ProcessingMethods.o \
 	${OBJECTDIR}/main.o
 
@@ -74,6 +75,11 @@ ${OBJECTDIR}/InputImage.o: nbproject/Makefile-${CND_CONF}.mk InputImage.cpp
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/C/opencv/build/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/InputImage.o InputImage.cpp
+
+${OBJECTDIR}/MagazineDetection.o: nbproject/Makefile-${CND_CONF}.mk MagazineDetection.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/C/opencv/build/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/MagazineDetection.o MagazineDetection.cpp
 
 ${OBJECTDIR}/ProcessingMethods.o: nbproject/Makefile-${CND_CONF}.mk ProcessingMethods.cpp 
 	${MKDIR} -p ${OBJECTDIR}

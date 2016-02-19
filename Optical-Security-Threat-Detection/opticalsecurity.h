@@ -21,6 +21,7 @@ cv::Mat filterImage(cv::Mat src);
 cv::Mat blobDetection(cv::Mat src);
 cv::Mat edgeDetection(cv::Mat src);
 cv::Mat barrelDetection(cv::Mat src);
+cv::Mat magazineDetection(cv::Mat src);
 cv::Mat blurImage(cv::Mat src);
 cv::Mat detectPeople(cv::Mat src);
 cv::Mat detectFaces(cv::Mat src);
