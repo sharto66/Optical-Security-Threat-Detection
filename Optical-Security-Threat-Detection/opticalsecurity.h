@@ -15,19 +15,17 @@
 #define OPTICALSECURITY_H
 
 #include <opencv2/opencv.hpp>
+#include "InputImage.h"
 
-cv::Mat thresholdImage(cv::Mat src);
-cv::Mat filterImage(cv::Mat src);
-cv::Mat blobDetection(cv::Mat src);
-cv::Mat edgeDetection(cv::Mat src);
-cv::Mat barrelDetection(cv::Mat src);
-cv::Mat magazineDetection(cv::Mat src);
-cv::Mat blurImage(cv::Mat src);
-cv::Mat detectPeople(cv::Mat src);
-cv::Mat detectFaces(cv::Mat src);
-cv::Mat cornerDetection(cv::Mat src);
-cv::Mat lineDetect(cv::Mat src);
-cv::Mat colourThreshold(cv::Mat src);
+InputImage thresholdImage(InputImage src);
+InputImage edgeDetection(InputImage src);
+InputImage barrelDetection(InputImage src);
+InputImage magazineDetection(InputImage src);
+InputImage blurImage(InputImage src);
+InputImage detectFaces(InputImage src);
+InputImage lineDetect(InputImage src);
+InputImage colourThreshold(InputImage src);
+InputImage detectPeople(InputImage src);
 char* getImageSet(int set);
 
 #endif /* OPTICALSECURITY_H */

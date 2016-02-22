@@ -2,6 +2,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "InputImage.h"
 
 using namespace std;
 using namespace cv;
@@ -15,18 +16,18 @@ bool slopeMatch(float s1, float s2);
 bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
 bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 
-Mat barrelDetection(Mat src)
+InputImage barrelDetection(InputImage src)
 {
     Mat img, harris, dst, dstCopy;
-    cvtColor(src, dst, CV_GRAY2BGR);
-    cvtColor(src, dstCopy, CV_GRAY2BGR);
+    cvtColor(src.image, dst, CV_GRAY2BGR);
+    cvtColor(src.image, dstCopy, CV_GRAY2BGR);
     std::vector<Point> points;
     std::vector<Vec4i> lines;
     Point p1, p2, p3, p4;
     Rect r1, r2;
     for(int i = 0; i < 45; i++)
     {
-        img = rotate(src, i);
+        img = rotate(src.image, i);
         dst = rotate(dstCopy, i);
         cout << "rotated " + to_string(i) + " degree" << endl;
         HoughLinesP(img, lines, 0.1, CV_PI/180, 30, 5, 0.00);
@@ -51,6 +52,7 @@ Mat barrelDetection(Mat src)
 //                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
                             line(dst, p1, p2, Scalar(0,0,255), 1, 8);
                             line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+                            src.threatInfo += "Gun barrel detected";
 //                            points.push_back(p1);
 //                            points.push_back(p2);
 //                            points.push_back(p3);
@@ -62,7 +64,8 @@ Mat barrelDetection(Mat src)
         }
     }
     cv::flip(dst.t(), dst, 1);
-    return dst;
+    src.image = dst;
+    return src;
 }
 
 bool cornerDetected(Mat src, Point p1)

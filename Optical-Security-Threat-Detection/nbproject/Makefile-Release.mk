@@ -36,6 +36,7 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/BarrelDetection.o \
+	${OBJECTDIR}/HumanDetection.o \
 	${OBJECTDIR}/InputImage.o \
 	${OBJECTDIR}/MagazineDetection.o \
 	${OBJECTDIR}/ProcessingMethods.o \
@@ -70,6 +71,11 @@ ${OBJECTDIR}/BarrelDetection.o: nbproject/Makefile-${CND_CONF}.mk BarrelDetectio
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.cc) -O2 -I/C/opencv/build/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/BarrelDetection.o BarrelDetection.cpp
+
+${OBJECTDIR}/HumanDetection.o: nbproject/Makefile-${CND_CONF}.mk HumanDetection.cpp 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.cc) -O2 -I/C/opencv/build/include -std=c++11 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/HumanDetection.o HumanDetection.cpp
 
 ${OBJECTDIR}/InputImage.o: nbproject/Makefile-${CND_CONF}.mk InputImage.cpp 
 	${MKDIR} -p ${OBJECTDIR}

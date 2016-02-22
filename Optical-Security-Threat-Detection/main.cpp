@@ -7,14 +7,16 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 5
+#define NUM 10
 
 using namespace std;
 using namespace cv;
 
+float borderPercent = 0.20;
+
 int main()
 {
-    Mat images[NUM];
+    InputImage input[NUM];
     Mat image;
     char image_name[100];
     char* image_location;
@@ -31,30 +33,32 @@ int main()
     for(int i=0;i < NUM; i++)
     {        
         sprintf(image_name, image_location, i+1);
-        image = imread(image_name);
-        images[i] = image;
+        input[i].image = imread(image_name);
     }
-    int size = sizeof(images)/sizeof(images[0]);
+    int size = sizeof(input)/sizeof(input[0]);
     cout << size << endl;
     for(int i=0;i < size; i++)
     {
-        if(images[i].data)
+        if(input[i].image.data)
         {
-           images[i] = blurImage(images[i]);
-           //images[i] = filterImage(images[i]);
-           //images[i] = blobDetection(images[i]);
-           //images[i] = colourThreshold(images[i]);
-           //images[i] = thresholdImage(images[i]);
-           images[i] = edgeDetection(images[i]);
-           images[i] = barrelDetection(images[i]);
-           //images[i] = magazineDetection(images[i]);
-           //images[i] = lineDetect(images[i]);
-           //images[i] = cornerDetection(images[i]);
-           //images[i] = detectFaces(images[i]);
-           //images[i] = detectPeople(images[i]);
-           //generalisedHough(images[i]);
+           input[i] = detectPeople(input[i]);
+           //input[i] = blurImage(input[i]);
+           //input[i] = colourThreshold(input[i]);
+           //input[i] = thresholdImage(input[i]);
+           //input[i] = edgeDetection(input[i]);
+           //input[i] = barrelDetection(input[i]);
+           //input[i] = magazineDetection(input[i]);
+           //input[i] = lineDetect(input[i]);
+           
+           int bottom = (int) (borderPercent * input[i].image.rows);
+           copyMakeBorder(input[i].image, input[i].image, 0, bottom, 0, 0, BORDER_CONSTANT, Scalar(0,0,0));
+           Point p = cvPoint(10, input[i].image.rows - 20);
+           putText(input[i].image, "Threat Detected: " + to_string(input[i].containsThreat), p,
+                   FONT_HERSHEY_COMPLEX_SMALL, 0.5, Scalar(255,255,255), 1, CV_AA);
+           //putText(input[i].image, "Num. of Persons: " + to_string(input[i].numPeople), );
+           //putText(input[i].image, "Threat Info: " + input[i].threatInfo, );
            namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
-           imshow(string("Display window") + std::to_string(i+1), images[i]);
+           imshow(string("Display window") + std::to_string(i+1), input[i].image);
         }
         else
         {

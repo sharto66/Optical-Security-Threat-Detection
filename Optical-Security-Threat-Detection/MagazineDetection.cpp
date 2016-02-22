@@ -2,14 +2,15 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "InputImage.h"
 
 using namespace std;
 using namespace cv;
 
-Mat magazineDetection(Mat src)
+InputImage magazineDetection(InputImage src)
 {
     Mat img, dst, dstCopy;
-    cvtColor(src, dst, CV_GRAY2BGR);
+    cvtColor(src.image, dst, CV_GRAY2BGR);
     
     vector<Vec4f> position;
     
@@ -32,7 +33,7 @@ Mat magazineDetection(Mat src)
     Mat templ = imread("C:\\Users\\Sean\\Pictures\\OpenCV Tests/magazine.jpg", IMREAD_GRAYSCALE);
     hough->setTemplate(templ);
     
-    hough->detect(src, position);
+    hough->detect(src.image, position);
     
     cout << "Found : " << position.size() << " objects" << endl;
     

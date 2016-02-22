@@ -15,6 +15,7 @@
                    displayName="Source Files"
                    projectFiles="true">
       <itemPath>BarrelDetection.cpp</itemPath>
+      <itemPath>HumanDetection.cpp</itemPath>
       <itemPath>InputImage.cpp</itemPath>
       <itemPath>MagazineDetection.cpp</itemPath>
       <itemPath>ProcessingMethods.cpp</itemPath>
@@ -93,6 +94,8 @@
         </linkerTool>
       </compileType>
       <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HumanDetection.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -204,6 +207,8 @@
       </compileType>
       <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="HumanDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.h" ex="false" tool="3" flavor2="0">
@@ -280,6 +285,8 @@
         </linkerTool>
       </compileType>
       <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HumanDetection.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
@@ -382,6 +389,8 @@
       </compileType>
       <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="HumanDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="8">
       </item>
       <item path="InputImage.h" ex="false" tool="3" flavor2="0">
@@ -467,6 +476,8 @@
         </linkerTool>
       </compileType>
       <item path="BarrelDetection.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="HumanDetection.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="InputImage.cpp" ex="false" tool="1" flavor2="0">
       </item>
