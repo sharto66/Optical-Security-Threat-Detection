@@ -7,7 +7,7 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 20
+#define NUM 5
 
 using namespace std;
 using namespace cv;
@@ -46,8 +46,8 @@ int main()
            //images[i] = colourThreshold(images[i]);
            //images[i] = thresholdImage(images[i]);
            images[i] = edgeDetection(images[i]);
-           //images[i] = barrelDetection(images[i]);
-           images[i] = magazineDetection(images[i]);
+           images[i] = barrelDetection(images[i]);
+           //images[i] = magazineDetection(images[i]);
            //images[i] = lineDetect(images[i]);
            //images[i] = cornerDetection(images[i]);
            //images[i] = detectFaces(images[i]);

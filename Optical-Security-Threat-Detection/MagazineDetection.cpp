@@ -20,18 +20,21 @@ Mat magazineDetection(Mat src)
     hough->setDp(2);
     hough->setMaxBufferSize(1000);
     hough->setMinAngle(0);
-    hough->setMaxAngle(360);
+    hough->setMaxAngle(90);
     hough->setMinScale(0.2);
     hough->setMaxScale(3);
     hough->setAngleStep(1);
-    hough->setAngleThresh(10000);
+    hough->setAngleThresh(50);
     hough->setScaleStep(0.05);
-    hough->setScaleThresh(1000);
-    hough->setPosThresh(100);
+    hough->setScaleThresh(50);
+    hough->setPosThresh(50);
+    
+    Mat templ = imread("C:\\Users\\Sean\\Pictures\\OpenCV Tests/magazine.jpg", IMREAD_GRAYSCALE);
+    hough->setTemplate(templ);
     
     hough->detect(src, position);
     
     cout << "Found : " << position.size() << " objects" << endl;
     
-    return dst;
+    return src;
 }
