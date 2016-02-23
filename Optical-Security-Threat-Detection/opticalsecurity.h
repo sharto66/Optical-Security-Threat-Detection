@@ -26,6 +26,7 @@ InputImage detectFaces(InputImage src);
 InputImage lineDetect(InputImage src);
 InputImage colourThreshold(InputImage src);
 InputImage detectPeople(InputImage src);
+InputImage applyInterface(InputImage src);
 char* getImageSet(int set);
 
 #endif /* OPTICALSECURITY_H */

@@ -12,12 +12,11 @@
 using namespace std;
 using namespace cv;
 
-float borderPercent = 0.20;
+float borderPercent = 0.25;
 
 int main()
 {
     InputImage input[NUM];
-    Mat image;
     char image_name[100];
     char* image_location;
     int imgSet;
@@ -50,13 +49,8 @@ int main()
            //input[i] = magazineDetection(input[i]);
            //input[i] = lineDetect(input[i]);
            
-           int bottom = (int) (borderPercent * input[i].image.rows);
-           copyMakeBorder(input[i].image, input[i].image, 0, bottom, 0, 0, BORDER_CONSTANT, Scalar(0,0,0));
-           Point p = cvPoint(10, input[i].image.rows - 20);
-           putText(input[i].image, "Threat Detected: " + to_string(input[i].containsThreat), p,
-                   FONT_HERSHEY_COMPLEX_SMALL, 0.5, Scalar(255,255,255), 1, CV_AA);
-           //putText(input[i].image, "Num. of Persons: " + to_string(input[i].numPeople), );
-           //putText(input[i].image, "Threat Info: " + input[i].threatInfo, );
+           input[i] = applyInterface(input[i]);
+           
            namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
            imshow(string("Display window") + std::to_string(i+1), input[i].image);
         }
@@ -88,3 +82,23 @@ char* getImageSet(int set)
     return image_name;
 }
 
+InputImage applyInterface(InputImage src)
+{
+    int border = (int) (borderPercent * src.image.rows);
+    copyMakeBorder(src.image, src.image, 0, border, 0, 0, BORDER_CONSTANT, Scalar(0,0,0));
+    
+    Point p1 = cvPoint(10, src.image.rows - 10);
+    Point p2 = cvPoint(10, p1.y - 10);
+    Point p3 = cvPoint(10, p2.y - 10);
+    string threat = "";
+    if(src.containsThreat) threat = "True";
+    else threat = "False";
+    
+    putText(src.image, "Threat Detected: " + threat, p1,
+            FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
+    putText(src.image, "Num. of Persons: " + to_string(src.numPeople), p2,
+            FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
+    putText(src.image, "Threat Info: " + src.threatInfo, p3,
+            FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
+    return src;
+}

@@ -22,28 +22,31 @@ int size = sizeof(cascades)/sizeof(cascades[0]);
 
 InputImage detectPeople(InputImage src)
 {
+    std::vector<Rect> human, human_filtered;
     for(int k = 0; k < size; k++)
     {
-        std::vector<Rect> human, human_filtered;
-        if (!cascade.load(cascades[k])){
+        //std::vector<Rect> human, human_filtered;
+        if(!cascade.load(cascades[k])){
             cout << "Error loading cascade file" << endl;
             return src;
         }
         else{
-            cascade.detectMultiScale(src.image, human, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(30, 30));
+            cascade.detectMultiScale(src.image, human, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(20, 20));
         }
         int i, j;
-        for (i=0; i < human.size(); i++) 
+        for (i=0; i < human.size(); i++)
         {
             cout << "Human detected" << endl;
-            src.numPeople += 1;
             Rect r = human[i];
             for (j=0; j < human.size(); j++)
             {
-                if (j!=i && (r & human[j]) == r) break;
+                //function needed here to return false if two Rects within small variance
+                if(j != i && (r & human[j]) == r) break;
             }
-            if (j== human.size())
+            if(j == human.size()){
                 human_filtered.push_back(r);
+                src.numPeople += 1;
+            }
         }
         for (i=0; i < human_filtered.size(); i++) 
         {
@@ -57,4 +60,3 @@ InputImage detectPeople(InputImage src)
     }
     return src;
 }
-
