@@ -5,50 +5,62 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/objdetect.hpp>
-
 #include "InputImage.h"
 
 using namespace std;
 using namespace cv;
+
+bool sameDetectedPerson(Rect r1, Rect r2);
 
 cv::String cascades[3] = {"haarcascades/haarcascade_frontalface_default.xml",
                           "haarcascades/haarcascade_frontalface_alt.xml",
                           "haarcascades/haarcascade_frontalface_alt2.xml"};
 
 cv::String body_cascade_name = "haarcascades/haarcascade_upperbody.xml";
-CascadeClassifier cascade;
-
-int size = sizeof(cascades)/sizeof(cascades[0]);
 
 InputImage detectPeople(InputImage src)
 {
+    CascadeClassifier cascade;
+    int size = sizeof(cascades)/sizeof(cascades[0]);
     std::vector<Rect> human, human_filtered;
+    
     for(int k = 0; k < size; k++)
     {
-        //std::vector<Rect> human, human_filtered;
         if(!cascade.load(cascades[k])){
             cout << "Error loading cascade file" << endl;
             return src;
         }
         else{
-            cascade.detectMultiScale(src.image, human, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(20, 20));
+            cascade.detectMultiScale(src.image, human, 1.1, 2, 0 | CV_HAAR_SCALE_IMAGE, Size(10, 10));
         }
         int i, j;
-        for (i=0; i < human.size(); i++)
+        for(i=0; i < human.size(); i++)
         {
             cout << "Human detected" << endl;
             Rect r = human[i];
-            for (j=0; j < human.size(); j++)
+            for(j=0; j < human.size(); j++)
             {
                 //function needed here to return false if two Rects within small variance
                 if(j != i && (r & human[j]) == r) break;
             }
             if(j == human.size()){
-                human_filtered.push_back(r);
-                src.numPeople += 1;
+                if(human_filtered.size() == 0){
+                    human_filtered.push_back(r);
+                    src.numPeople += 1;
+                }
+                else{
+                    for(int l = 0; l < human_filtered.size(); l++)
+                    {
+                        if((human_filtered[l] & r) != r){
+                            human_filtered.push_back(r);
+                            src.numPeople += 1;
+                            break;
+                        }
+                    }
+                }
             }
         }
-        for (i=0; i < human_filtered.size(); i++) 
+        for(i=0; i < human_filtered.size(); i++) 
         {
             Rect r = human_filtered[i];
             r.x += cvRound(r.width*0.1);
@@ -59,4 +71,20 @@ InputImage detectPeople(InputImage src)
         }
     }
     return src;
+}
+
+bool sameDetectedPerson(Rect r1, Rect r2)
+{
+    int var = 10;
+    if((r1 & r2) == r1){
+        return true;
+    }
+    else if(r1.x <= r2.x + var && r1.x >= r2.x - var){
+        if(r1.y <= r2.y + var && r1.y >= r2.y - var){
+            return true;
+        }
+    }
+    else{
+        return false;
+    }
 }
