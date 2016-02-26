@@ -40,7 +40,6 @@ InputImage detectPeople(InputImage src)
             Rect r = human[i];
             for(j=0; j < human.size(); j++)
             {
-                //function needed here to return false if two Rects within small variance
                 if(j != i && (r & human[j]) == r) break;
             }
             if(j == human.size()){
@@ -71,20 +70,4 @@ InputImage detectPeople(InputImage src)
         }
     }
     return src;
-}
-
-bool sameDetectedPerson(Rect r1, Rect r2)
-{
-    int var = 10;
-    if((r1 & r2) == r1){
-        return true;
-    }
-    else if(r1.x <= r2.x + var && r1.x >= r2.x - var){
-        if(r1.y <= r2.y + var && r1.y >= r2.y - var){
-            return true;
-        }
-    }
-    else{
-        return false;
-    }
 }

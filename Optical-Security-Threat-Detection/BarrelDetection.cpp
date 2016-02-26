@@ -3,6 +3,7 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include "InputImage.h"
+#include "opticalsecurity.h"
 
 using namespace std;
 using namespace cv;
@@ -52,6 +53,8 @@ InputImage barrelDetection(InputImage src)
 //                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
                             line(dst, p1, p2, Scalar(0,0,255), 1, 8);
                             line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+                            //here the potential detected barrel will be colour thresholded in the original image
+                            Mat b = src.origImage.copyTo()
                             src.threatInfo += "Gun barrel detected";
 //                            points.push_back(p1);
 //                            points.push_back(p2);

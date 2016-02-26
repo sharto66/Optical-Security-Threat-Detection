@@ -18,6 +18,7 @@ InputImage::InputImage()
 InputImage::InputImage(cv::Mat image)
 {
     this->image = image;
+    this->origImage = image;
     this->containsThreat = false;
     this->threatInfo = "";
     this->numPeople = 0;

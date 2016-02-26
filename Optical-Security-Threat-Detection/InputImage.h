@@ -14,6 +14,7 @@
 class InputImage {
 public:
     cv::Mat image;
+    cv::Mat origImage;
     bool containsThreat;
     std::string threatInfo;
     int numPeople;

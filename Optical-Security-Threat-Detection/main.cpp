@@ -40,13 +40,13 @@ int main()
     {
         if(input[i].image.data)
         {
-           input[i] = detectPeople(input[i]);
-           //input[i] = blurImage(input[i]);
+           //input[i] = detectPeople(input[i]);
+           input[i] = blurImage(input[i]);
            //input[i] = colourThreshold(input[i]);
            //input[i] = thresholdImage(input[i]);
-           //input[i] = edgeDetection(input[i]);
+           input[i] = edgeDetection(input[i]);
            //input[i] = barrelDetection(input[i]);
-           //input[i] = magazineDetection(input[i]);
+           input[i] = magazineDetection(input[i]);
            //input[i] = lineDetect(input[i]);
            
            input[i] = applyInterface(input[i]);
