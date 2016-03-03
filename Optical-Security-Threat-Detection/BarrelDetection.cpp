@@ -31,7 +31,7 @@ InputImage barrelDetection(InputImage src)
         img = rotate(src.image, i);
         dst = rotate(dstCopy, i);
         cout << "rotated " + to_string(i) + " degree" << endl;
-        HoughLinesP(img, lines, 0.1, CV_PI/180, 30, 5, 0.00);
+        HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 4, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
         for(int i = 0; i < lines.size(); i++)
@@ -54,8 +54,26 @@ InputImage barrelDetection(InputImage src)
                             line(dst, p1, p2, Scalar(0,0,255), 1, 8);
                             line(dst, p3, p4, Scalar(0,255,0), 1, 8);
                             //here the potential detected barrel will be colour thresholded in the original image
-                            Mat b = src.origImage.copyTo()
-                            src.threatInfo += "Gun barrel detected";
+                            //Mat b((int) norm(p1-p3), (int) norm(p2-p4), CV_8UC1, Scalar::all(0));
+                            //Mat sub_img = src.origImage(cv::Rect(), cv::Rect());
+                            //Rect r = Rect(p2.x, p2.y, p3.x-p2.x, p3.y-p2.y);
+                            Rect r;
+                            r.x = p1.x;
+                            r.y = p1.y;
+                            r.width = norm(p1-p2);
+                            r.height = norm(p1-p3);
+                            Mat b = Mat(src.origImage, r);
+//                            cout << to_string(r.width) << endl;
+//                            cout << to_string(r.height) << endl;
+//                            cout << to_string(r.x) << endl;
+//                            cout << to_string(r.y) << endl;
+//                            rectangle(dst,r,Scalar(255,0,0), 1, 8);
+                            //Mat b = src.origImage(r).clone();
+                            //src.origImage(Rect(p3, p2, (int)norm(p1-p3), (int)norm(p2-p4))).copyTo(b);
+//                            namedWindow("example", WINDOW_AUTOSIZE);
+//                            imshow("example", b);
+//                            waitKey(0);
+//                            src.threatInfo += "Gun barrel detected";
 //                            points.push_back(p1);
 //                            points.push_back(p2);
 //                            points.push_back(p3);
@@ -128,7 +146,7 @@ bool lengthMatch(Point p1, Point p2, Point p3, Point p4)
 Rect getRect(Point p)
 {
     Rect r;
-    int pad = 40;
+    int pad = 30;
     
     r.width = pad;
     r.height = pad;
