@@ -17,9 +17,10 @@ public:
     cv::Mat origImage;
     bool containsThreat;
     std::string threatInfo;
+    std::string imageName;
     int numPeople;
     InputImage();
-    InputImage(cv::Mat image);
+    InputImage(cv::Mat image, std::string imageName);
     virtual ~InputImage();
 private:
 

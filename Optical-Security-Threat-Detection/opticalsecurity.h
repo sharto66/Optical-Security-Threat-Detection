@@ -27,6 +27,8 @@ InputImage lineDetect(InputImage src);
 InputImage colourThreshold(InputImage src);
 InputImage detectPeople(InputImage src);
 InputImage applyInterface(InputImage src);
+void writeResultsToFile(InputImage input[]);
+std::string getImageName(std::string imagePath);
 char* getImageSet(int set);
 
 #endif /* OPTICALSECURITY_H */

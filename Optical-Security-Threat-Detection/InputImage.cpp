@@ -15,12 +15,13 @@ InputImage::InputImage()
     numPeople = 0;
 }
 
-InputImage::InputImage(cv::Mat image)
+InputImage::InputImage(cv::Mat image, std::string imageName)
 {
     this->image = image;
     this->origImage = image;
     this->containsThreat = false;
     this->threatInfo = "";
+    this->imageName = imageName;
     this->numPeople = 0;
 }
 

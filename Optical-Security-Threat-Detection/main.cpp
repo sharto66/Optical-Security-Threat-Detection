@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -32,7 +33,7 @@ int main()
     for(int i=0;i < NUM; i++)
     {        
         sprintf(image_name, image_location, i+1);
-        input[i].image = imread(image_name);
+        input[i] = InputImage(imread(image_name), image_name);
     }
     int size = sizeof(input)/sizeof(input[0]);
     cout << size << endl;
@@ -40,12 +41,12 @@ int main()
     {
         if(input[i].image.data)
         {
-           //input[i] = detectPeople(input[i]);
+           input[i] = detectPeople(input[i]);
            input[i] = blurImage(input[i]);
            //input[i] = colourThreshold(input[i]);
            input[i] = edgeDetection(input[i]);
            //input[i] = thresholdImage(input[i]);
-           input[i] = barrelDetection(input[i]);
+           //input[i] = barrelDetection(input[i]);
            //input[i] = magazineDetection(input[i]);
            //input[i] = lineDetect(input[i]);
            
@@ -59,6 +60,7 @@ int main()
             cout << "Something wrong" << endl;
         }
     }
+    writeResultsToFile(input);
     waitKey(0);
     cvDestroyAllWindows();
     return 0;
@@ -101,4 +103,33 @@ InputImage applyInterface(InputImage src)
     putText(src.image, "Threat Info: " + src.threatInfo, p3,
             FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
     return src;
+}
+
+void writeResultsToFile(InputImage input[])
+{
+    ofstream file("Test_Eval\\opticalSecDetectResults.json", std::ios::out);
+    std::string result, threat;
+    file << "{";
+    for(int i = 0; i < NUM; i++)
+    {
+        if(input[i].containsThreat) threat = "\"True\"";
+        else threat = "\"False\"";
+        result = "\"" + getImageName(input[i].imageName) + "\" : " + threat;
+        if(i < NUM-1) result = result + ", ";
+        file << result;
+    }
+    file << "}";
+    file.close();
+    cout << "Successfully written to file!" << endl;
+}
+
+std::string getImageName(string imagePath)
+{
+    std::string name;
+    int pos = imagePath.find_last_of('/');
+    for(int i = pos+1; i < imagePath.capacity(); i++)
+    {
+        name += imagePath[i];
+    }
+    return name;
 }
