@@ -32,18 +32,16 @@ InputImage thresholdImage(InputImage src)
     return src;
 }
 
-InputImage colourThreshold1(InputImage src)
+Mat thresholdImage(Mat src)
 {
     Mat channels[3];
-    split(src.image, channels);
-    int low = 10;
+    cvtColor(src, src, CV_BGR2HSV);
+    split(src, channels);
+    int low = 16;
     int high = 100;
-    Mat blue = (channels[0] < low) | (channels[0] > high);
-    Mat green = (channels[1] < low) | (channels[1] > high);
-    Mat red = (channels[2] < low) | (channels[2] > high);
-    Mat dst = red & green & blue;
-    src.image = dst;
-    return src;
+    Mat val = (channels[2] < low) | (channels[2] > high);
+    cv::threshold(val, val, 1, 255, THRESH_OTSU + CV_THRESH_BINARY);
+    return val;
 }
 
 InputImage colourThreshold(InputImage src)

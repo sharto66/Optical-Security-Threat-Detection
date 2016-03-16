@@ -1,71 +1,109 @@
 #include <iostream>
+#include <math.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include "featureDetection.h"
 #include "InputImage.h"
 
 using namespace std;
 using namespace cv;
 
+std::vector<std::vector<cv::Point>> contours;
+std::vector<std::vector<cv::Point>> curvedLines;
+
 InputImage magazineDetection(InputImage src)
 {
-    Mat img, dst, dstCopy;
-    cvtColor(src.image, dst, CV_GRAY2BGR);
+    Mat img, dst;
     img = src.image.clone();
-    
-    std::vector<std::vector<cv::Point>> contours;
+    cvtColor(src.image, dst, CV_GRAY2BGR);
+    std::vector<cv::Point> contour;
     cv::findContours(img, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-    
-    for(int i = 0; i < contours.size(); i++)
+    cout << "Test" << endl;
+    for(int i = 0; i < 1; i++)
     {
-        //function needed here to check if contour is curved
-        //Perhaps HoughLines() could be used here instead?
-        cv::drawContours(dst, contours, i, Scalar(0,255,0));
+        contour = contours.at(i);
+        cout << src.imageName << "\n";
+        cout << "Size = " + to_string(contour.size()) << "\n";
+        curvedLines.push_back(getCurvedLine(contour));
+        if(isNearOtherCurve(contour))
+        {
+            //cv::drawContours(dst, contour, 0, Scalar(0,255,0));
+            //draw curves and store result to InputImage
+        }
     }
     
     src.image = dst;
-    
-//    for(int i = 0; i < contours.size(); i++)
-//    {
-//        Point p1 = Point(contours[i][0], contours[i][1]);
-//        Point p2 = Point(contours[i][2], contours[i][3]);
-//        for(int j = i+1; j < contours.size(); j++)
-//        {
-//            Point p3 = Point(contours[j][0], contours[j][1]);
-//            Point p4 = Point(contours[j][2], contours[j][3]);
-//        }
-//    }
-    
-//    vector<Vec4f> position;
-//    Ptr<GeneralizedHoughGuil> hough = createGeneralizedHoughGuil();
-//
-//    hough->setMinDist(100);
-//    hough->setLevels(360);
-//    hough->setDp(2);
-//    hough->setMaxBufferSize(1000);
-//    hough->setMinAngle(0);
-//    hough->setMaxAngle(90);
-//    hough->setMinScale(0.05);
-//    hough->setMaxScale(2);
-//    hough->setAngleStep(1);
-//    hough->setAngleThresh(50);
-//    hough->setScaleStep(0.05);
-//    hough->setScaleThresh(50);
-//    hough->setPosThresh(80);
-//    
-//    Mat templ = imread("C:\\Users\\Sean\\Pictures\\OpenCV Tests/magazine2.jpg", IMREAD_GRAYSCALE);
-//    //namedWindow("Template", WINDOW_AUTOSIZE);
-//    //imshow("Template", templ);
-//    hough->setTemplate(templ);
-//    
-//    hough->detect(src.image, position);
-//    
-//    cout << "Found : " << position.size() << " objects" << endl;
-    
     return src;
 }
 
-bool curvedLine(std::vector<cv::Point> contour)
+vector<cv::Point> getCurvedLine(vector<cv::Point> contour)
 {
-    
+    //This function will read in read in a vector of points
+    //and then find if the line is suitably curved
+    vector<cv::Point> matchSlopes;
+    vector<float> slopes;
+    Point p1, p2;
+    Point first = contour.front();
+    Point middle = contour.at(contour.size() / 2);
+    Point last = contour.back();
+    float A, B, C, X, Y;
+    for(int i = 0; i < contour.size(); i++)
+    {
+        p1 = contour.at(i);
+        p2 = contour.at(i+1);
+        slopes.push_back(getSlope(p1, p2));
+    }
+    for(int i = 0; i < slopes.size(); i++)
+    {
+        if(slopes.at(i) == (slopes.at(slopes.size()-i))*-1 || -1*(slopes.at(i)) == slopes.at(slopes.size()-i))
+        {
+            if(matchSlopes.empty())
+            {
+                matchSlopes.push_back(contour.at(i));
+                matchSlopes.push_back(contour.at(i+1));
+            }
+            else
+            {
+                matchSlopes.push_back(contour.at(i+1));
+                matchSlopes.push_back(contour.at(i+2));
+            }
+        }
+    }
+    return matchSlopes;
 }
+
+bool isNearOtherCurve(std::vector<cv::Point> contour)
+{
+    Point p = contour.at(contour.size() / 2);
+    Rect r = getRect(p);
+    for(int i = 0; i < curvedLines.size(); i++)
+    {
+        for(int j = 0; j < curvedLines.at(i).size(); i++)
+        {
+            if(r.contains(curvedLines.at(i).at(j)) && curvedLines.at(i).at(j) != contour)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+bool isSimilarCurve(std::vector<cv::Point> contour)
+{
+    //This function will check if curve is similar to any others
+    return true;
+}
+
+
+//    vector<Vec3f> circles;
+//    HoughCircles(img, circles, CV_HOUGH_GRADIENT, 2, dst.rows/20, 200, 100);
+//    cout << "Size: " + to_string(circles.size()) << "\n";
+//    for(int i = 0; i < circles.size(); i++)
+//    {
+//        Point center(cvRound(circles[i][0]), cvRound(circles[i][1]));
+//        int radius = cvRound(circles[i][2]);
+//        circle(dst, center, 3, Scalar(0,255,0), 1, 8, 0);
+//        circle(dst, center, radius, Scalar(0,0,255), 1, 8, 0);
+//    }

@@ -17,6 +17,8 @@
 #include <opencv2/opencv.hpp>
 #include "InputImage.h"
 
+using namespace cv;
+
 InputImage thresholdImage(InputImage src);
 InputImage edgeDetection(InputImage src);
 InputImage barrelDetection(InputImage src);
@@ -24,6 +26,7 @@ InputImage magazineDetection(InputImage src);
 InputImage blurImage(InputImage src);
 InputImage detectFaces(InputImage src);
 InputImage lineDetect(InputImage src);
+Mat thresholdImage(Mat src);
 InputImage colourThreshold(InputImage src);
 InputImage detectPeople(InputImage src);
 InputImage applyInterface(InputImage src);

@@ -4,18 +4,10 @@
 #include <opencv2/highgui/highgui.hpp>
 #include "InputImage.h"
 #include "opticalsecurity.h"
+#include "featureDetection.h"
 
 using namespace std;
 using namespace cv;
-
-float getSlope(Point p1, Point p2);
-Rect getRect(Point p);
-Mat rotate(Mat src, float angle);
-CV_EXPORTS_W void drawLines(Mat img, vector<Point> points);
-bool cornerDetected(Mat harris, Point p);
-bool slopeMatch(float s1, float s2);
-bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
-bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 
 InputImage barrelDetection(InputImage src)
 {
@@ -30,7 +22,7 @@ InputImage barrelDetection(InputImage src)
     {
         img = rotate(src.image, i);
         dst = rotate(dstCopy, i);
-        cout << "rotated " + to_string(i) + " degree" << endl;
+        cout << "rotated " + to_string(i*2) + " degrees\n";
         HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 4, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
@@ -49,35 +41,12 @@ InputImage barrelDetection(InputImage src)
                 if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4) && endToEnd(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
+                            if(isGunColour(src, p1, p2, p3, p4)){
 //                            rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
 //                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
                             line(dst, p1, p2, Scalar(0,0,255), 1, 8);
                             line(dst, p3, p4, Scalar(0,255,0), 1, 8);
-                            //here the potential detected barrel will be colour thresholded in the original image
-                            //Mat b((int) norm(p1-p3), (int) norm(p2-p4), CV_8UC1, Scalar::all(0));
-                            //Mat sub_img = src.origImage(cv::Rect(), cv::Rect());
-                            //Rect r = Rect(p2.x, p2.y, p3.x-p2.x, p3.y-p2.y);
-                            Rect r;
-                            r.x = p1.x;
-                            r.y = p1.y;
-                            r.width = norm(p1-p2);
-                            r.height = norm(p1-p3);
-                            Mat b = Mat(src.origImage, r);
-//                            cout << to_string(r.width) << endl;
-//                            cout << to_string(r.height) << endl;
-//                            cout << to_string(r.x) << endl;
-//                            cout << to_string(r.y) << endl;
-//                            rectangle(dst,r,Scalar(255,0,0), 1, 8);
-                            //Mat b = src.origImage(r).clone();
-                            //src.origImage(Rect(p3, p2, (int)norm(p1-p3), (int)norm(p2-p4))).copyTo(b);
-//                            namedWindow("example", WINDOW_AUTOSIZE);
-//                            imshow("example", b);
-//                            waitKey(0);
-//                            src.threatInfo += "Gun barrel detected";
-//                            points.push_back(p1);
-//                            points.push_back(p2);
-//                            points.push_back(p3);
-//                            points.push_back(p4);
+                            }
                         }
                     }
                 }
@@ -87,6 +56,88 @@ InputImage barrelDetection(InputImage src)
     cv::flip(dst.t(), dst, 1);
     src.image = dst;
     return src;
+}
+
+bool isGunColour(InputImage src, Point p1, Point p2, Point p3, Point p4)
+{
+    //here the potential detected barrel will be colour thresholded in the original image
+    Mat img;
+    Rect r = getROIrectangle(p1, p2, p3, p4);
+    try{
+        img = src.origImage(r);
+    }
+    catch(cv::Exception e){
+        return false;
+    }
+    catch(std::exception e){
+        return false;
+    }
+//    namedWindow("example", WINDOW_AUTOSIZE);
+//    imshow("example", img);
+//    waitKey(0);
+//    cvDestroyAllWindows();
+    img = thresholdImage(img);
+    int total = img.rows * img.cols;
+    int percent = total - cv::countNonZero(img);
+    if(percent >= 40){
+        return false;
+    }
+    else{
+        src.threatInfo += "Gun barrel detected";
+        return true;
+    }
+}
+
+Rect getROIrectangle(Point p1, Point p2, Point p3, Point p4)
+{
+    Point tl, br;
+    float len1, len2, len3, len4;
+    len1 = norm(p1-p3);
+    len2 = norm(p1-p4);
+    len3 = norm(p2-p3);
+    len4 = norm(p2-p4);
+    if(len1 > len2 && len1 > len3 && len1 > len4){
+        if(norm(p3-p1) > len1){
+            tl = p3;
+            br = p2;
+        }
+        else{
+            tl = p1;
+            br = p3;
+        }
+    }
+    else if(len2 > len1 && len2 > len3 && len2 > len4){
+        if(norm(p4-p1) > len2){
+            tl = p4;
+            br = p1;
+        }
+        else{
+            tl = p1;
+            br = p4;
+        }
+    }
+    else if(len3 > len1 && len3 > len2 && len3 > len4){
+        if(norm(p3-p2) > len3){
+            tl = p3;
+            br = p2;
+        }
+        else{
+            tl = p2;
+            br = p3;
+        }
+    }
+    else if(len4 > len1 && len4 > len2 && len4 > len3){
+        if(norm(p4-p2) > len4){
+            tl = p4;
+            br = p2;
+        }
+        else{
+            tl = p2;
+            br = p4;
+        }
+    }
+    Rect r = Rect(tl, br);
+    return r;
 }
 
 bool cornerDetected(Mat src, Point p1)
@@ -210,13 +261,4 @@ bool endToEnd1(Point p1, Point p2, Point p3, Point p4)
         return false;
     }
     else return true;
-}
-
-CV_EXPORTS_W void drawLines(Mat img, vector<Point> points)
-{
-    for(int i = 0; i < points.size()-3; i++)
-    {
-        line(img, points.at(i), points.at(i+1), Scalar(0,0,255), 1, 8);
-        line(img, points.at(i+2), points.at(i+3), Scalar(0,255,0), 1, 8);
-    }
 }

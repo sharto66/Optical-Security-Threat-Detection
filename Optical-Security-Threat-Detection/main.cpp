@@ -8,25 +8,34 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 5
+#define NUM 15
 
 using namespace std;
 using namespace cv;
 
 float borderPercent = 0.25;
 
-int main()
+int main(int argc, char *argv[])
 {
     InputImage input[NUM];
     char image_name[100];
     char* image_location;
     int imgSet;
-    
-    cout << "Enter 1 for pistols" << endl;
-    cout << "Enter 2 for all guns" << endl;
-    cout << "Enter 3 for test image in root" << endl;
-    cout << "Enter 4 for OpenCV test images" << endl;
-    cin >> imgSet;
+    if(argc == 0)
+    {
+        cout << "Enter 1 for pistols" << endl;
+        cout << "Enter 2 for all guns" << endl;
+        cout << "Enter 3 for test image in root" << endl;
+        cout << "Enter 4 for OpenCV test images" << endl;
+        cin >> imgSet;
+    }
+    else if(argv[0] == "-test")
+    {
+        imgSet == 1;
+    }
+    else {
+        cout << "Usage: No arguments or -test" << "\n";
+    }
     
     image_location = getImageSet(imgSet);
     
@@ -41,14 +50,13 @@ int main()
     {
         if(input[i].image.data)
         {
-           input[i] = detectPeople(input[i]);
+           //input[i] = detectPeople(input[i]);
            input[i] = blurImage(input[i]);
-           //input[i] = colourThreshold(input[i]);
+           input[i] = colourThreshold(input[i]);
            input[i] = edgeDetection(input[i]);
            //input[i] = thresholdImage(input[i]);
            //input[i] = barrelDetection(input[i]);
-           //input[i] = magazineDetection(input[i]);
-           //input[i] = lineDetect(input[i]);
+           input[i] = magazineDetection(input[i]);
            
            input[i] = applyInterface(input[i]);
            
@@ -112,8 +120,8 @@ void writeResultsToFile(InputImage input[])
     file << "{";
     for(int i = 0; i < NUM; i++)
     {
-        if(input[i].containsThreat) threat = "\"True\"";
-        else threat = "\"False\"";
+        if(input[i].containsThreat) threat = "true";
+        else threat = "false";
         result = "\"" + getImageName(input[i].imageName) + "\" : " + threat;
         if(i < NUM-1) result = result + ", ";
         file << result;
