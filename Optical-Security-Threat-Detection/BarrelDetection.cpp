@@ -20,9 +20,9 @@ InputImage barrelDetection(InputImage src)
     Rect r1, r2;
     for(int i = 0; i < 45; i++)
     {
-        img = rotate(src.image, i);
-        dst = rotate(dstCopy, i);
-        cout << "rotated " + to_string(i*2) + " degrees\n";
+        //img = rotate(src.image, i);
+        //dst = rotate(dstCopy, i);
+        //cout << "rotated " + to_string(i*2) + " degrees\n";
         HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 4, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
@@ -41,12 +41,12 @@ InputImage barrelDetection(InputImage src)
                 if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4) && endToEnd(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
-                            if(isGunColour(src, p1, p2, p3, p4)){
+                            //if(isGunColour(src, p1, p2, p3, p4)){
 //                            rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
 //                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
-                            line(dst, p1, p2, Scalar(0,0,255), 1, 8);
-                            line(dst, p3, p4, Scalar(0,255,0), 1, 8);
-                            }
+                                line(dst, p1, p2, Scalar(0,0,255), 1, 8);
+                                line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+                            //}
                         }
                     }
                 }

@@ -51,12 +51,7 @@ InputImage colourThreshold(InputImage src)
     split(src.image, channels);
     int low = 16;
     int high = 100;
-    Mat hue = (channels[0] < 0) | (channels[0] > 0);
-    Mat sat = (channels[1] < 0) | (channels[1] > 7);
     Mat val = (channels[2] < low) | (channels[2] > high);
-    Mat dst = hue & sat & val;
-    cv::threshold(dst, dst, 1, 255, THRESH_OTSU);
-    cv::threshold(sat, sat, 1, 255, THRESH_OTSU);
     cv::threshold(val, val, 1, 255, THRESH_OTSU + CV_THRESH_BINARY);
     src.image = val;
     return src;

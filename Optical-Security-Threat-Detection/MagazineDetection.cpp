@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <math.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
@@ -19,12 +20,11 @@ InputImage magazineDetection(InputImage src)
     cvtColor(src.image, dst, CV_GRAY2BGR);
     std::vector<cv::Point> contour;
     cv::findContours(img, contours, CV_RETR_LIST, CV_CHAIN_APPROX_NONE);
-    cout << "Test" << endl;
     for(int i = 0; i < 1; i++)
     {
         contour = contours.at(i);
-        cout << src.imageName << "\n";
-        cout << "Size = " + to_string(contour.size()) << "\n";
+//        cout << src.imageName << "\n";
+//        cout << "Size = " + to_string(contour.size()) << "\n";
         curvedLines.push_back(getCurvedLine(contour));
         if(isNearOtherCurve(contour))
         {
@@ -32,41 +32,61 @@ InputImage magazineDetection(InputImage src)
             //draw curves and store result to InputImage
         }
     }
-    
     src.image = dst;
     return src;
 }
 
-vector<cv::Point> getCurvedLine(vector<cv::Point> contour)
+std::vector<cv::Point> getCurvedLine(std::vector<cv::Point> contour)
 {
-    //This function will read in read in a vector of points
-    //and then find if the line is suitably curved
-    vector<cv::Point> matchSlopes;
-    vector<float> slopes;
+    std::vector<cv::Point> matchSlopes;
+    std::vector<float> slopes;
+    std::vector<float>::iterator it;
     Point p1, p2;
-    Point first = contour.front();
-    Point middle = contour.at(contour.size() / 2);
-    Point last = contour.back();
-    float A, B, C, X, Y;
-    for(int i = 0; i < contour.size(); i++)
+    for(int i = 0; i < contour.size()-4; i=i+4)
     {
         p1 = contour.at(i);
-        p2 = contour.at(i+1);
+        p2 = contour.at(i+4);
         slopes.push_back(getSlope(p1, p2));
+        cout << "Point 1: " + to_string(p1.x) + " " + to_string(p1.y) << "\n";
+        cout << "Point 2: " + to_string(p2.x) + " " + to_string(p2.y) << "\n";
+        cout << "\n";
     }
+    int size = (slopes.size()/2);
+    cout << "Size / 2 = " + to_string(size) <<"\n";
+//    for(it=slopes.begin(); it < slopes.end(); it++)
+//    {
+//        cout << "iterator: " + to_string(*it) << "\n";
+//        if(*it * (slopes.back()) == -1)
+//        {
+//            
+//        }
+//        slopes.pop_back();
+//        if(slopes.size() == size || slopes.size() == size-1){
+//            break;
+//        }
+//    }
     for(int i = 0; i < slopes.size(); i++)
     {
-        if(slopes.at(i) == (slopes.at(slopes.size()-i))*-1 || -1*(slopes.at(i)) == slopes.at(slopes.size()-i))
+        for(int j = slopes.size()-1; j > i; j--)
         {
-            if(matchSlopes.empty())
+//            cout << "Slope size: " + to_string(slopes.size()) << "\n";
+//            cout << std::to_string(slopes.at(slopes.size() - (i+1))) << "\n";
+//            cout << "Test" << "\n";
+//            cout << to_string(slopes.at(i)) << "\n";
+//            cout << to_string(slopes.back()) << "\n\n";
+            if(slopes.at(i) * (slopes.at(j)) == -1)
             {
-                matchSlopes.push_back(contour.at(i));
-                matchSlopes.push_back(contour.at(i+1));
-            }
-            else
-            {
-                matchSlopes.push_back(contour.at(i+1));
-                matchSlopes.push_back(contour.at(i+2));
+                cout << "Test After if" << "\n";
+                if(matchSlopes.empty())
+                {
+                    matchSlopes.push_back(contour.at(i));
+                    matchSlopes.push_back(contour.at(i+1));
+                }
+                else
+                {
+                    matchSlopes.push_back(contour.at(i+1));
+                    matchSlopes.push_back(contour.at(i+2));
+                }
             }
         }
     }
@@ -81,7 +101,7 @@ bool isNearOtherCurve(std::vector<cv::Point> contour)
     {
         for(int j = 0; j < curvedLines.at(i).size(); i++)
         {
-            if(r.contains(curvedLines.at(i).at(j)) && curvedLines.at(i).at(j) != contour)
+            if(r.contains(curvedLines.at(i).at(j)) && curvedLines.at(i) != contour)
             {
                 return true;
             }
@@ -107,3 +127,6 @@ bool isSimilarCurve(std::vector<cv::Point> contour)
 //        circle(dst, center, 3, Scalar(0,255,0), 1, 8, 0);
 //        circle(dst, center, radius, Scalar(0,0,255), 1, 8, 0);
 //    }
+
+//if(slopes.at(i) == (slopes.at(slopes.size() - (i+1)))*-1 ||
+//           -1*(slopes.at(i)) == slopes.at(slopes.size() - (i+1)))

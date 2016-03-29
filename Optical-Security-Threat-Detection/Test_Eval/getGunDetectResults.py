@@ -19,12 +19,15 @@ headers = {
 detectedTrue = 0
 list = {}
 dirName = 'C:/Users/Sean/Pictures/guns/handguns/'
+dirThreat = '../images/Threat/'
+dirNonThreat = '../images/Non_Threat/'
+
+#Here will be another multi process for each directory of images
+
 numImages = len(glob.glob1(dirName, 'image*.jpg'))
-print('\nGetting results from GunDetect...\n')
 
 for i in range(1, numImages):
 	fileName = 'image%d.jpg' %(i)
-	print('Analysing ' + fileName)
 	image = {'file_data': (fileName, open(dirName + fileName, 'rb'), 'image/jpeg')}
 	r = requests.post(url, files=image, headers=headers)
 	jsonData = json.loads(r.text)

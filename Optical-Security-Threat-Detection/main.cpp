@@ -21,20 +21,20 @@ int main(int argc, char *argv[])
     char image_name[100];
     char* image_location;
     int imgSet;
-    if(argc == 0)
-    {
-        cout << "Enter 1 for pistols" << endl;
-        cout << "Enter 2 for all guns" << endl;
-        cout << "Enter 3 for test image in root" << endl;
-        cout << "Enter 4 for OpenCV test images" << endl;
-        cin >> imgSet;
-    }
-    else if(argv[0] == "-test")
+    std::string arg = "";
+    
+    if(argc == 2) arg = argv[1];
+    if(arg == "-test")
     {
         imgSet == 1;
     }
-    else {
-        cout << "Usage: No arguments or -test" << "\n";
+    else if(argc == 1)
+    {
+        cout << "Enter 1 for Threats" << endl;
+        cout << "Enter 2 for Non Threats" << endl;
+        cout << "Enter 3 for test image in root" << endl;
+        cout << "Enter 4 for OpenCV test images" << endl;
+        cin >> imgSet;
     }
     
     image_location = getImageSet(imgSet);
@@ -45,27 +45,28 @@ int main(int argc, char *argv[])
         input[i] = InputImage(imread(image_name), image_name);
     }
     int size = sizeof(input)/sizeof(input[0]);
-    cout << size << endl;
     for(int i=0;i < size; i++)
     {
         if(input[i].image.data)
         {
            //input[i] = detectPeople(input[i]);
            input[i] = blurImage(input[i]);
-           input[i] = colourThreshold(input[i]);
+           //input[i] = colourThreshold(input[i]);
            input[i] = edgeDetection(input[i]);
            //input[i] = thresholdImage(input[i]);
-           //input[i] = barrelDetection(input[i]);
-           input[i] = magazineDetection(input[i]);
+           input[i] = barrelDetection(input[i]);
+           //input[i] = magazineDetection(input[i]);
            
            input[i] = applyInterface(input[i]);
            
-           namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
-           imshow(string("Display window") + std::to_string(i+1), input[i].image);
+           if(arg != "-test"){
+               namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
+               imshow(string("Display window") + std::to_string(i+1), input[i].image);
+           }
         }
         else
         {
-            cout << "Something wrong" << endl;
+            cout << "Error in image data for " + input[i].imageName << endl;
         }
     }
     writeResultsToFile(input);
@@ -78,7 +79,8 @@ char* getImageSet(int set)
 {
     char* image_name;
     if(set == 1) {
-        image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
+        //image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
+        image_name = "images\\Threat/image%d.jpg";
     }
     else if(set == 2) {
         image_name = "C:\\Users\\Sean\\Pictures\\guns/image%d.jpg";
@@ -128,7 +130,6 @@ void writeResultsToFile(InputImage input[])
     }
     file << "}";
     file.close();
-    cout << "Successfully written to file!" << endl;
 }
 
 std::string getImageName(string imagePath)

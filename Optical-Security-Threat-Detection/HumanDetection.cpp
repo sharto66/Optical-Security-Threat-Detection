@@ -45,7 +45,6 @@ InputImage detectPeople(InputImage src)
             if(j == human.size()){
                 if(human_filtered.size() == 0){
                     human_filtered.push_back(r);
-                    src.numPeople += 1;
                 }
                 else{
                     for(int l = 0; l < human_filtered.size(); l++)
