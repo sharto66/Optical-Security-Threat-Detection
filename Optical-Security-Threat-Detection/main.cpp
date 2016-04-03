@@ -8,12 +8,13 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 15
+#define NUM 4
 
 using namespace std;
 using namespace cv;
 
 float borderPercent = 0.25;
+std::string argument = "";
 
 int main(int argc, char *argv[])
 {
@@ -21,12 +22,11 @@ int main(int argc, char *argv[])
     char image_name[100];
     char* image_location;
     int imgSet;
-    std::string arg = "";
-    
-    if(argc == 2) arg = argv[1];
-    if(arg == "-test")
-    {
-        imgSet == 1;
+    if(argc == 2){
+        argument = argv[1];
+    }
+    if(argument == "-test"){
+        imgSet = 1;
     }
     else if(argc == 1)
     {
@@ -53,13 +53,12 @@ int main(int argc, char *argv[])
            input[i] = blurImage(input[i]);
            //input[i] = colourThreshold(input[i]);
            input[i] = edgeDetection(input[i]);
-           //input[i] = thresholdImage(input[i]);
-           input[i] = barrelDetection(input[i]);
-           //input[i] = magazineDetection(input[i]);
+           //input[i] = barrelDetection(input[i]);
+           input[i] = magazineDetection(input[i]);
            
            input[i] = applyInterface(input[i]);
            
-           if(arg != "-test"){
+           if(argument != "-test"){
                namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
                imshow(string("Display window") + std::to_string(i+1), input[i].image);
            }
@@ -79,11 +78,15 @@ char* getImageSet(int set)
 {
     char* image_name;
     if(set == 1) {
-        //image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
-        image_name = "images\\Threat/image%d.jpg";
+//        image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
+        if(argument == "-test"){
+            image_name = "..\\images\\Threat/image%d.jpg";
+        }
+        else image_name = "images\\Threat/image%d.jpg";
     }
     else if(set == 2) {
-        image_name = "C:\\Users\\Sean\\Pictures\\guns/image%d.jpg";
+        //image_name = "C:\\Users\\Sean\\Pictures\\guns/image%d.jpg";
+        image_name = "images\\Non_Threat/image%d.jpg";
     }
     else if(set == 3) {
         image_name = "me_eating_cereal.jpg";
@@ -117,7 +120,12 @@ InputImage applyInterface(InputImage src)
 
 void writeResultsToFile(InputImage input[])
 {
-    ofstream file("Test_Eval\\opticalSecDetectResults.json", std::ios::out);
+    std::string filepath;
+    if(argument == "-test") filepath = "opticalSecDetectResults.json";
+    else filepath = "Test_Eval\\opticalSecDetectResults.json";
+    ofstream prefile(filepath, std::ios::out);
+    prefile.close();
+    ofstream file(filepath, std::ios::out | std::ios::app);
     std::string result, threat;
     file << "{";
     for(int i = 0; i < NUM; i++)

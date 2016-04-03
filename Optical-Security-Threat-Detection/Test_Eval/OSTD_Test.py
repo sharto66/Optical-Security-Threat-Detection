@@ -17,7 +17,8 @@ def gunDetectProcess():
 def ostdProcess():
 	print('Getting results from Optical Security Threat Detection...\n')
 	ostd_start = time.time()
-	subprocess.call([r"..\dist\Release\MinGW-Windows\optical-security-threat-detection.exe", r"-test"])
+	subprocess.call([r"..\dist\Release\MinGW-Windows\optical-security-threat-detection.exe", "-test"]
+					,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 	ostd_end = time.time()
 	ostd_time = float("{0:.2f}".format(ostd_end - ostd_start))
 	print('\nRetrieved Optical Security Threat Detection results in ' + str(ostd_time) + ' seconds')

@@ -11,17 +11,17 @@ using namespace cv;
 
 InputImage barrelDetection(InputImage src)
 {
+    cout << "Test before" << "\n";
     Mat img, harris, dst, dstCopy;
     cvtColor(src.image, dst, CV_GRAY2BGR);
     cvtColor(src.image, dstCopy, CV_GRAY2BGR);
-    std::vector<Point> points;
     std::vector<Vec4i> lines;
     Point p1, p2, p3, p4;
     Rect r1, r2;
     for(int i = 0; i < 45; i++)
     {
-        //img = rotate(src.image, i);
-        //dst = rotate(dstCopy, i);
+        img = rotate(src.image, i);
+        dst = rotate(dstCopy, i);
         //cout << "rotated " + to_string(i*2) + " degrees\n";
         HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 4, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
@@ -41,19 +41,21 @@ InputImage barrelDetection(InputImage src)
                 if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4) && endToEnd(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
-                            //if(isGunColour(src, p1, p2, p3, p4)){
-//                            rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
-//                            rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
-                                line(dst, p1, p2, Scalar(0,0,255), 1, 8);
-                                line(dst, p3, p4, Scalar(0,255,0), 1, 8);
-                            //}
+                            if(isGunColour(src, p1, p2, p3, p4)){
+//                                rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
+//                                rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
+//                                line(dst, p1, p2, Scalar(0,0,255), 1, 8);
+//                                line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+                                src.containsThreat = true;
+                                src.threatInfo = "Gun barrel detected";
+                            }
                         }
                     }
                 }
             }
         }
     }
-    cv::flip(dst.t(), dst, 1);
+    //cv::flip(dst.t(), dst, 1);
     src.image = dst;
     return src;
 }
@@ -61,30 +63,28 @@ InputImage barrelDetection(InputImage src)
 bool isGunColour(InputImage src, Point p1, Point p2, Point p3, Point p4)
 {
     //here the potential detected barrel will be colour thresholded in the original image
-    Mat img;
-    Rect r = getROIrectangle(p1, p2, p3, p4);
     try{
+        Mat img;
+        Rect r = getROIrectangle(p1, p2, p3, p4);
         img = src.origImage(r);
+        img = thresholdImage(img);
+//        namedWindow("example", WINDOW_AUTOSIZE);
+//        imshow("example", img);
+//        waitKey(0);
+//        cvDestroyAllWindows();
+        int total = img.rows * img.cols;
+        int percent = 0;
+        if(countBlackPixels(img) > 0) percent = (countBlackPixels(img) / total) * 100;
+        //if(countBlackPixels(img) > 0)
+            //cout << to_string(countBlackPixels(img)) + " / " + to_string(total) << "\n";
+        if(percent < 70) return false;
+        else return true;
     }
     catch(cv::Exception e){
         return false;
     }
     catch(std::exception e){
         return false;
-    }
-//    namedWindow("example", WINDOW_AUTOSIZE);
-//    imshow("example", img);
-//    waitKey(0);
-//    cvDestroyAllWindows();
-    img = thresholdImage(img);
-    int total = img.rows * img.cols;
-    int percent = total - cv::countNonZero(img);
-    if(percent >= 40){
-        return false;
-    }
-    else{
-        src.threatInfo += "Gun barrel detected";
-        return true;
     }
 }
 
@@ -138,6 +138,22 @@ Rect getROIrectangle(Point p1, Point p2, Point p3, Point p4)
     }
     Rect r = Rect(tl, br);
     return r;
+}
+
+int countBlackPixels(Mat img)
+{
+    int count = 0;
+    for(int i = 0; i < img.rows; i++)
+    {
+        for( int j = 0; j < img.cols; j++)
+        {
+            if (img.at<uchar>(i,j) == 0)
+            {
+                count++;
+            } 
+        }
+    }
+    return count;
 }
 
 bool cornerDetected(Mat src, Point p1)

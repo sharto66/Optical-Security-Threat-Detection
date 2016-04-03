@@ -30,7 +30,8 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4);
 bool isGunColour(InputImage src, Point p1, Point p2, Point p3, Point p4);
 std::vector<cv::Point> getCurvedLine(std::vector<cv::Point> contour);
 bool isNearOtherCurve(std::vector<cv::Point> contour);
-bool isSimilarCurve(std::vector<cv::Point> contour);
+bool isSimilarCurve(std::vector<cv::Point> line1, std::vector<cv::Point> line2);
+int countBlackPixels(cv::Mat img);
 
 #endif /* FEATUREDETECTION_H */
 

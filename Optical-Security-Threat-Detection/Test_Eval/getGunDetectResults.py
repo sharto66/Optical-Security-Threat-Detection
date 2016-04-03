@@ -19,8 +19,8 @@ headers = {
 detectedTrue = 0
 list = {}
 dirName = 'C:/Users/Sean/Pictures/guns/handguns/'
-dirThreat = '../images/Threat/'
-dirNonThreat = '../images/Non_Threat/'
+#dirName = '../images/Threat/'
+#dirName = '../images/Non_Threat/'
 
 #Here will be another multi process for each directory of images
 
@@ -42,7 +42,7 @@ file2 = open('gundetectResults.json', 'w')
 
 for i in list:
 	print(i + ' = ' + str(list[i]), file=file1)
-summary = 'Accuracy of GunDetect: ' + str((detectedTrue / numImages) * 100)
+summary = 'Accuracy of GunDetect: ' + str(float("{0:.2f}".format((detectedTrue / numImages) * 100)))
 print(summary, file=file1)
 
 json.dump(list, file2)
