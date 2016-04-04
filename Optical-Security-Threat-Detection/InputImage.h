@@ -19,6 +19,7 @@ public:
     std::string threatInfo;
     std::string imageName;
     int numPeople;
+    std::vector<cv::Point> barrelPoints;
     InputImage();
     InputImage(cv::Mat image, std::string imageName);
     virtual ~InputImage();

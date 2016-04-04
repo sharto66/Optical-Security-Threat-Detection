@@ -36,7 +36,6 @@ InputImage detectPeople(InputImage src)
         int i, j;
         for(i=0; i < human.size(); i++)
         {
-            cout << "Human detected" << endl;
             Rect r = human[i];
             for(j=0; j < human.size(); j++)
             {

@@ -9,9 +9,10 @@
 using namespace std;
 using namespace cv;
 
+std::vector<int> rotDegrees;
+
 InputImage barrelDetection(InputImage src)
 {
-    cout << "Test before" << "\n";
     Mat img, harris, dst, dstCopy;
     cvtColor(src.image, dst, CV_GRAY2BGR);
     cvtColor(src.image, dstCopy, CV_GRAY2BGR);
@@ -22,18 +23,17 @@ InputImage barrelDetection(InputImage src)
     {
         img = rotate(src.image, i);
         dst = rotate(dstCopy, i);
-        //cout << "rotated " + to_string(i*2) + " degrees\n";
         HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 4, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
-        for(int i = 0; i < lines.size(); i++)
+        for(int k = 0; k < lines.size(); k++)
         {
-            p1 = Point(lines[i][0], lines[i][1]);
-            p2 = Point(lines[i][2], lines[i][3]);
+            p1 = Point(lines[k][0], lines[k][1]);
+            p2 = Point(lines[k][2], lines[k][3]);
             r1 = getRect(p1);
             r2 = getRect(p2);
             float slope1 = getSlope(p1, p2);
-            for(int j = i+1; j < lines.size(); j++)
+            for(int j = k+1; j < lines.size(); j++)
             {
                 p3 = Point(lines[j][0], lines[j][1]);
                 p4 = Point(lines[j][2], lines[j][3]);
@@ -41,13 +41,18 @@ InputImage barrelDetection(InputImage src)
                 if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4) && endToEnd(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
-                            if(isGunColour(src, p1, p2, p3, p4)){
-//                                rectangle(dst, r1.tl(), r1.br(), Scalar(0,255,0), 1);
-//                                rectangle(dst, r2.tl(), r2.br(), Scalar(0,255,0), 1);
+                            Mat temp = src.origImage;
+                            if(isGunColour(src.origImage, p1, p2, p3, p4)){
+                                src.barrelPoints.push_back(p1);
+                                src.barrelPoints.push_back(p2);
+                                src.barrelPoints.push_back(p3);
+                                src.barrelPoints.push_back(p4);
+                                rotDegrees.push_back(i);
+                                src.containsThreat = true;
+                                src.threatInfo = "Gun barrel";
+                                src.origImage = temp;
 //                                line(dst, p1, p2, Scalar(0,0,255), 1, 8);
 //                                line(dst, p3, p4, Scalar(0,255,0), 1, 8);
-                                src.containsThreat = true;
-                                src.threatInfo = "Gun barrel detected";
                             }
                         }
                     }
@@ -55,30 +60,33 @@ InputImage barrelDetection(InputImage src)
             }
         }
     }
-    //cv::flip(dst.t(), dst, 1);
-    src.image = dst;
+//    cv::flip(dst.t(), dst, 1);
+//    src.image = dst;
+    //src = drawLines(src);
     return src;
 }
 
-bool isGunColour(InputImage src, Point p1, Point p2, Point p3, Point p4)
+bool isGunColour(Mat src, Point p1, Point p2, Point p3, Point p4)
 {
-    //here the potential detected barrel will be colour thresholded in the original image
+    Mat img;
+    Rect r = getROIrectangle(p1, p2, p3, p4);
     try{
-        Mat img;
-        Rect r = getROIrectangle(p1, p2, p3, p4);
-        img = src.origImage(r);
+        if(r != Rect()){
+            img = src(r);
+        }
         img = thresholdImage(img);
-//        namedWindow("example", WINDOW_AUTOSIZE);
-//        imshow("example", img);
-//        waitKey(0);
-//        cvDestroyAllWindows();
         int total = img.rows * img.cols;
         int percent = 0;
-        if(countBlackPixels(img) > 0) percent = (countBlackPixels(img) / total) * 100;
-        //if(countBlackPixels(img) > 0)
-            //cout << to_string(countBlackPixels(img)) + " / " + to_string(total) << "\n";
-        if(percent < 70) return false;
+        if(countBlackPixels(img) > 0){
+            percent = (countBlackPixels(img) / total) * 100;
+        }
+        if(percent < 80) return false;
         else return true;
+        }
+        else{
+            return false;
+        }
+        
     }
     catch(cv::Exception e){
         return false;
@@ -137,7 +145,12 @@ Rect getROIrectangle(Point p1, Point p2, Point p3, Point p4)
         }
     }
     Rect r = Rect(tl, br);
-    return r;
+    if(r.width > 0 && r.height > 0 && r.area() > 0){
+       return r; 
+    }
+    else{
+        return Rect();
+    }
 }
 
 int countBlackPixels(Mat img)
@@ -236,7 +249,6 @@ Mat rotate(Mat src, float angle)
     return src;
 }
 
-//function needs to be be re implemented to allow variances
 bool endToEnd(Point p1, Point p2, Point p3, Point p4)
 {
     if(p1.x == p3.x || p1.x == p4.x || p2.x == p3.x || p2.x == p4.x){
@@ -248,33 +260,18 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4)
     else return true;
 }
 
-//function needs to be be re implemented to allow variances
-bool endToEnd1(Point p1, Point p2, Point p3, Point p4)
+InputImage drawLines(InputImage img)
 {
-    float var = 1;
-    if(p1.x <= p3.x+var && p1.x >= p3.x-var){
-        return false;
+    int rotCount = 0;
+    for(int i = 0; i < img.barrelPoints.size()-4; i=i+4)
+    {
+        Point p1 = img.barrelPoints.at(i);
+        Point p2 = img.barrelPoints.at(i+1);
+        Point p3 = img.barrelPoints.at(i+2);
+        Point p4 = img.barrelPoints.at(i+3);
+        img.origImage = rotate(img.origImage, rotDegrees.at(rotCount));
+        rotCount++;
+        cv::line(img.origImage, p1, p2, Scalar(0,0,255), 1, 8);
+        cv::line(img.origImage, p3, p4, Scalar(0,255,0), 1, 8);
     }
-    else if(p1.x <= p4.x+var && p1.x >= p4.x-var){
-        return false;
-    }
-    else if(p2.x <= p3.x+var && p2.x >= p3.x-var){
-        return false;
-    }
-    else if(p2.x <= p4.x+var && p2.x >= p4.x-var){
-        return false;
-    }
-    else if(p1.y <= p3.y+var && p1.y >= p3.y-var){
-        return false;
-    }
-    else if(p1.y <= p4.y+var && p1.y >= p4.y-var){
-        return false;
-    }
-    else if(p2.y <= p3.y+var && p2.y >= p3.y-var){
-        return false;
-    }
-    else if(p2.y <= p4.y+var && p2.y >= p4.y-var){
-        return false;
-    }
-    else return true;
 }

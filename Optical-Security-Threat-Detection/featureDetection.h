@@ -23,15 +23,17 @@ float getSlope(Point p1, Point p2);
 Rect getRect(Point p);
 Rect getROIrectangle(Point p1, Point p2, Point p3, Point p4);
 Mat rotate(Mat src, float angle);
+Mat drawLines(Mat img, std::vector<cv::Point> points);
 bool cornerDetected(Mat harris, Point p);
 bool slopeMatch(float s1, float s2);
 bool lengthMatch(Point p1, Point p2, Point p3, Point p4);
 bool endToEnd(Point p1, Point p2, Point p3, Point p4);
-bool isGunColour(InputImage src, Point p1, Point p2, Point p3, Point p4);
+bool isGunColour(Mat src, Point p1, Point p2, Point p3, Point p4);
 std::vector<cv::Point> getCurvedLine(std::vector<cv::Point> contour);
 bool isNearOtherCurve(std::vector<cv::Point> contour);
 bool isSimilarCurve(std::vector<cv::Point> line1, std::vector<cv::Point> line2);
 int countBlackPixels(cv::Mat img);
+InputImage drawLines(InputImage img);
 
 #endif /* FEATUREDETECTION_H */
 

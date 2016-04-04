@@ -1,6 +1,7 @@
 import requests
 import json
 import glob
+import sys
 
 url = 'http://169.55.143.119:8999/_classify_upload'
 
@@ -18,11 +19,13 @@ headers = {
 
 detectedTrue = 0
 list = {}
-dirName = 'C:/Users/Sean/Pictures/guns/handguns/'
-#dirName = '../images/Threat/'
-#dirName = '../images/Non_Threat/'
 
-#Here will be another multi process for each directory of images
+dirName = '../images/Threat/'
+
+if sys.argv[1] == "-Threat":
+	dirName = '../images/Threat/'
+elif sys.argv[1] == "-Non_Threat":
+	dirName = '../images/Non_Threat/'
 
 numImages = len(glob.glob1(dirName, 'image*.jpg'))
 

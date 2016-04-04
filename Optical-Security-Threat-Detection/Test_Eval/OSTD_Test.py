@@ -1,29 +1,42 @@
 import json
 import os
+import sys
 import time
 import subprocess
 from multiprocessing import Process
 
 def gunDetectProcess():
+	arg = '-Threat'
+	if sys.argv[1] == '-Non_Threat':
+		arg = '-Non_Threat'
 	print('\nGetting results from GunDetect...\n')
 	gd_start = time.time()
 	with open('getGunDetectResults.py') as f:
-		code = compile(f.read(), 'getGunDetectResults.py', 'exec')
+		code = compile(f.read(), str('getGunDetectResults.py ' + arg), 'exec')
 		exec(code)
 	gd_end = time.time()
 	gd_time = float("{0:.2f}".format(gd_end - gd_start))
 	print('\nRetrieved GunDetect results in ' + str(gd_time) + ' seconds')
 
 def ostdProcess():
+	arg = '-Threat'
+	if sys.argv[1] == '-Threat':
+		arg = '-Threat'
+	elif sys.argv[1] == '-Non_Threat':
+		arg = '-Non_Threat'
 	print('Getting results from Optical Security Threat Detection...\n')
 	ostd_start = time.time()
-	subprocess.call([r"..\dist\Release\MinGW-Windows\optical-security-threat-detection.exe", "-test"]
+	subprocess.call([r"..\dist\Release\MinGW-Windows\optical-security-threat-detection.exe", arg]
 					,stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 	ostd_end = time.time()
 	ostd_time = float("{0:.2f}".format(ostd_end - ostd_start))
 	print('\nRetrieved Optical Security Threat Detection results in ' + str(ostd_time) + ' seconds')
 
 if __name__=='__main__':
+	if sys.argv[1] == '-Threat':
+		print('\nAnalysing Threat images:\n')
+	elif sys.argv[1] == '-Non_Threat':
+		print('\nAnalysing Non-Threat images:\n')
 	p1 = Process(target=gunDetectProcess)
 	p1.start()
 	p2 = Process(target=ostdProcess)

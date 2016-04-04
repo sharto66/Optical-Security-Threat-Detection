@@ -8,13 +8,15 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 4
+#define NUM 1
 
 using namespace std;
 using namespace cv;
 
 float borderPercent = 0.25;
 std::string argument = "";
+std::string threatArg = "-Threat";
+std::string nonThreatArg = "-Non_Threat";
 
 int main(int argc, char *argv[])
 {
@@ -25,95 +27,105 @@ int main(int argc, char *argv[])
     if(argc == 2){
         argument = argv[1];
     }
-    if(argument == "-test"){
-        imgSet = 1;
-    }
     else if(argc == 1)
     {
         cout << "Enter 1 for Threats" << endl;
         cout << "Enter 2 for Non Threats" << endl;
-        cout << "Enter 3 for test image in root" << endl;
-        cout << "Enter 4 for OpenCV test images" << endl;
         cin >> imgSet;
     }
-    
-    image_location = getImageSet(imgSet);
-    
-    for(int i=0;i < NUM; i++)
-    {        
-        sprintf(image_name, image_location, i+1);
-        input[i] = InputImage(imread(image_name), image_name);
+    if(argument == threatArg){
+        imgSet = 1;
     }
-    int size = sizeof(input)/sizeof(input[0]);
-    for(int i=0;i < size; i++)
-    {
-        if(input[i].image.data)
-        {
-           //input[i] = detectPeople(input[i]);
-           input[i] = blurImage(input[i]);
-           //input[i] = colourThreshold(input[i]);
-           input[i] = edgeDetection(input[i]);
-           //input[i] = barrelDetection(input[i]);
-           input[i] = magazineDetection(input[i]);
-           
-           input[i] = applyInterface(input[i]);
-           
-           if(argument != "-test"){
-               namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
-               imshow(string("Display window") + std::to_string(i+1), input[i].image);
-           }
-        }
-        else
-        {
-            cout << "Error in image data for " + input[i].imageName << endl;
+    else if(argument == nonThreatArg){
+        imgSet = 2;
+    }
+    else if(argument != nonThreatArg && argument != threatArg && argument != ""){
+        Mat argTest = imread(argument);
+        if(argTest.data){
+            InputImage argImage(argTest, argument);
+            argImage = analyseImage(argImage);
+            argImage = applyInterface(argImage);
+            namedWindow(string("Image window"), WINDOW_AUTOSIZE);
+            imshow(string("Image window"), argImage.origImage);
+            imgSet = 3;
         }
     }
-    writeResultsToFile(input);
+    if(imgSet != 3){
+        image_location = getImageSet(imgSet);
+        for(int i=0;i < NUM; i++)
+        {        
+            sprintf(image_name, image_location, i+1);
+            input[i] = InputImage(imread(image_name), image_name);
+        }
+        int size = sizeof(input)/sizeof(input[0]);
+        for(int i=0;i < size; i++)
+        {
+            if(input[i].image.data)
+            {
+                input[i] = analyseImage(input[i]);
+                input[i] = applyInterface(input[i]);
+    //           input[i] = magazineDetection(input[i]);
+               if(argument != threatArg && argument != nonThreatArg){
+                   namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
+                   imshow(string("Display window") + std::to_string(i+1), input[i].origImage);
+               }
+            }
+            else{
+                cout << "Error in image data for " + input[i].imageName << endl;
+            }
+        }
+        writeResultsToFile(input);
+    }
     waitKey(0);
     cvDestroyAllWindows();
     return 0;
+}
+
+InputImage analyseImage(InputImage src)
+{
+    src = detectPeople(src);
+    src = blurImage(src);
+    src = edgeDetection(src);
+    src = barrelDetection(src);
+    return src;
 }
 
 char* getImageSet(int set)
 {
     char* image_name;
     if(set == 1) {
-//        image_name = "C:\\Users\\Sean\\Pictures\\guns\\handguns/image%d.jpg";
-        if(argument == "-test"){
+        if(argument == threatArg){
             image_name = "..\\images\\Threat/image%d.jpg";
         }
         else image_name = "images\\Threat/image%d.jpg";
     }
     else if(set == 2) {
-        //image_name = "C:\\Users\\Sean\\Pictures\\guns/image%d.jpg";
-        image_name = "images\\Non_Threat/image%d.jpg";
+        if(argument == nonThreatArg){
+            image_name = "..\\images\\Non_Threat/image%d.jpg";
+        }
+        else image_name = "images\\Non_Threat/image%d.jpg";
     }
-    else if(set == 3) {
-        image_name = "me_eating_cereal.jpg";
-    }
-    else if(set == 4) {
-        image_name = "C:\\Users\\Sean\\Pictures\\OpenCV Tests/image%d.jpg";
-    }
+    else cout << "Please enter valid option" << endl;
     return image_name;
 }
 
 InputImage applyInterface(InputImage src)
 {
-    int border = (int) (borderPercent * src.image.rows);
-    copyMakeBorder(src.image, src.image, 0, border, 0, 0, BORDER_CONSTANT, Scalar(0,0,0));
+    int border = (int) (borderPercent * src.origImage.rows);
+    copyMakeBorder(src.origImage, src.origImage, 0, border, 0, 0, BORDER_CONSTANT, Scalar(0,0,0));
     
-    Point p1 = cvPoint(10, src.image.rows - 10);
+    Point p1 = cvPoint(10, src.origImage.rows - 10);
     Point p2 = cvPoint(10, p1.y - 10);
     Point p3 = cvPoint(10, p2.y - 10);
     string threat = "";
     if(src.containsThreat) threat = "True";
     else threat = "False";
     
-    putText(src.image, "Threat Detected: " + threat, p1,
+    putText(src.origImage, "Threat Detected: " + threat, p1,
             FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
-    putText(src.image, "Num. of Persons: " + to_string(src.numPeople), p2,
+    putText(src.origImage, "Num. of Persons: " + to_string(src.numPeople), p2,
             FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
-    putText(src.image, "Threat Info: " + src.threatInfo, p3,
+    putText(src.origImage, "Threat Info: " + src.threatInfo, p3,
             FONT_HERSHEY_COMPLEX_SMALL, 0.42, Scalar(255,255,255), 1, CV_AA);
     return src;
 }
@@ -121,7 +133,9 @@ InputImage applyInterface(InputImage src)
 void writeResultsToFile(InputImage input[])
 {
     std::string filepath;
-    if(argument == "-test") filepath = "opticalSecDetectResults.json";
+    if(argument == threatArg || argument == nonThreatArg){
+        filepath = "opticalSecDetectResults.json";
+    }
     else filepath = "Test_Eval\\opticalSecDetectResults.json";
     ofstream prefile(filepath, std::ios::out);
     prefile.close();

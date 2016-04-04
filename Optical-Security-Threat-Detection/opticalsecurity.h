@@ -26,6 +26,7 @@ InputImage magazineDetection(InputImage src);
 InputImage blurImage(InputImage src);
 InputImage detectFaces(InputImage src);
 InputImage lineDetect(InputImage src);
+InputImage analyseImage(InputImage src);
 Mat thresholdImage(Mat src);
 InputImage colourThreshold(InputImage src);
 InputImage detectPeople(InputImage src);

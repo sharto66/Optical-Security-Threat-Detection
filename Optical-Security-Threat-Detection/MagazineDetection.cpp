@@ -111,10 +111,10 @@ bool isNearOtherCurve(std::vector<cv::Point> contour)
                 if(r.contains(curvedLines.at(i).at(j)) && curvedLines.at(i) != contour)
                 {
                     cout << "in if" << endl;
-//                    if(isSimilarCurve(contour, curvedLines.at(i)))
-//                    {
+                    if(isSimilarCurve(contour, curvedLines.at(i)))
+                    {
                         return true;
-//                    }
+                    }
                 }
             }
             catch(std::exception e){
