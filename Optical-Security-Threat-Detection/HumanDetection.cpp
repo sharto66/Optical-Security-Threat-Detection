@@ -64,7 +64,7 @@ InputImage detectPeople(InputImage src)
             r.width = cvRound(r.width*0.8);
             r.y += cvRound(r.height*0.07);
             r.height = cvRound(r.height*0.8);
-            rectangle(src.image, r.tl(), r.br(), Scalar(0,255,0), 1);   
+            //rectangle(src.image, r.tl(), r.br(), Scalar(0,255,0), 1);   
         }
     }
     return src;

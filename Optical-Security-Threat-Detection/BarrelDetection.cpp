@@ -23,7 +23,7 @@ InputImage barrelDetection(InputImage src)
     {
         img = rotate(src.image, i);
         dst = rotate(dstCopy, i);
-        HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 4, 0.00);
+        HoughLinesP(img, lines, 0.1, CV_PI/180, 20, 5, 0.00);
         cornerHarris(img, harris, 3, 5, 0.1, BORDER_DEFAULT);
         normalize(harris, harris, 0, 255, NORM_MINMAX, CV_32FC1, Mat());
         for(int k = 0; k < lines.size(); k++)
@@ -38,21 +38,22 @@ InputImage barrelDetection(InputImage src)
                 p3 = Point(lines[j][0], lines[j][1]);
                 p4 = Point(lines[j][2], lines[j][3]);
                 float slope2 = getSlope(p3, p4);
-                if(slopeMatch(slope1, slope2) && lengthMatch(p1, p2, p3, p4) && endToEnd(p1, p2, p3, p4)){
+                if(slopeMatch(slope1, slope2) && endToEnd(p1, p2, p3, p4)){
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
-                            Mat temp = src.origImage;
                             if(isGunColour(src.origImage, p1, p2, p3, p4)){
-                                src.barrelPoints.push_back(p1);
-                                src.barrelPoints.push_back(p2);
-                                src.barrelPoints.push_back(p3);
-                                src.barrelPoints.push_back(p4);
-                                rotDegrees.push_back(i);
+//                                if(src.barrelPoints.size() < 100){
+//                                src.barrelPoints.push_back(p1);
+//                                src.barrelPoints.push_back(p2);
+//                                src.barrelPoints.push_back(p3);
+//                                src.barrelPoints.push_back(p4);
+//                                rotDegrees.push_back(i);
+//                                }
                                 src.containsThreat = true;
                                 src.threatInfo = "Gun barrel";
-                                src.origImage = temp;
-//                                line(dst, p1, p2, Scalar(0,0,255), 1, 8);
-//                                line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+                                cv::line(dst, p1, p2, Scalar(0,0,255), 1, 8);
+                                cv::line(dst, p3, p4, Scalar(0,255,0), 1, 8);
+//                                return src;
                             }
                         }
                     }
@@ -60,33 +61,31 @@ InputImage barrelDetection(InputImage src)
             }
         }
     }
-//    cv::flip(dst.t(), dst, 1);
-//    src.image = dst;
-    //src = drawLines(src);
+//    src = drawLines(src);
+    cv::flip(dst.t(), dst, 1);
+    src.origImage = dst;
     return src;
 }
 
 bool isGunColour(Mat src, Point p1, Point p2, Point p3, Point p4)
 {
-    Mat img;
-    Rect r = getROIrectangle(p1, p2, p3, p4);
     try{
-        if(r != Rect()){
-            img = src(r);
-        }
+        Mat img;
+        Rect r = getROIrectangle(p1, p2, p3, p4);
+        img = src(r).clone();
         img = thresholdImage(img);
         int total = img.rows * img.cols;
-        int percent = 0;
+        float percent = 0;
         if(countBlackPixels(img) > 0){
-            percent = (countBlackPixels(img) / total) * 100;
+            float black = countBlackPixels(img);
+            percent = (black / total) * 100.00f;
         }
-        if(percent < 80) return false;
-        else return true;
-        }
-        else{
+        if(percent < 70){
             return false;
         }
-        
+        else{
+            return true;
+        }
     }
     catch(cv::Exception e){
         return false;
@@ -94,6 +93,53 @@ bool isGunColour(Mat src, Point p1, Point p2, Point p3, Point p4)
     catch(std::exception e){
         return false;
     }
+}
+
+Rect getROIrectangle1(Point p1, Point p2, Point p3, Point p4)
+{
+//    Rect r;
+//    float height, width, len;
+//    float len1 = norm(p1-p2);
+//    float len2 = norm(p3-p4);
+//    float len3 = norm(p1-p3);
+//    float len4 = norm(p2-p4);
+//    if(len1 >= len2){
+//        len = len1;
+//    }
+//    else len = len2;
+//    if(p1.y > p2.y || p1.y < p2.y){
+//        
+//    }
+//    else if(p1.x > p2.x || p1.x < p2.x){
+//        
+//    }
+//    r = Rect(p1.x, p1.y, 30, 30);
+//    return r;
+    float height, width;
+    Rect r;
+    Point center = (p1 + p2 + p3 + p4) / 4;
+    float len1 = norm(p1-p2);
+    float len2 = norm(p3-p4);
+    if(p1.y > p2.y || p1.y < p2.y){
+        if(len1 >= len2){
+            height = len1;
+        }
+        else height = len2;
+        width = 10;
+    }
+    else if(p1.x > p2.x || p1.x < p2.x){
+        if(len1 >= len2){
+            width = len1; 
+        }
+        else width = len2;
+        height = 10;
+    }
+    else return r;
+    r.height = height;
+    r.width = width;
+    r.x = center.x - r.width/2;
+    r.y = center.y - r.height/2;
+    return r;
 }
 
 Rect getROIrectangle(Point p1, Point p2, Point p3, Point p4)
@@ -145,12 +191,7 @@ Rect getROIrectangle(Point p1, Point p2, Point p3, Point p4)
         }
     }
     Rect r = Rect(tl, br);
-    if(r.width > 0 && r.height > 0 && r.area() > 0){
-       return r; 
-    }
-    else{
-        return Rect();
-    }
+    return r;
 }
 
 int countBlackPixels(Mat img)
@@ -226,7 +267,7 @@ bool lengthMatch(Point p1, Point p2, Point p3, Point p4)
 Rect getRect(Point p)
 {
     Rect r;
-    int pad = 30;
+    int pad = 25;
     
     r.width = pad;
     r.height = pad;
@@ -262,6 +303,10 @@ bool endToEnd(Point p1, Point p2, Point p3, Point p4)
 
 InputImage drawLines(InputImage img)
 {
+    cout << "Size: " +  to_string(img.barrelPoints.size()) << endl;
+    if(img.barrelPoints.size() < 4){
+        return img;
+    }
     int rotCount = 0;
     for(int i = 0; i < img.barrelPoints.size()-4; i=i+4)
     {
@@ -274,4 +319,8 @@ InputImage drawLines(InputImage img)
         cv::line(img.origImage, p1, p2, Scalar(0,0,255), 1, 8);
         cv::line(img.origImage, p3, p4, Scalar(0,255,0), 1, 8);
     }
+    img.origImage = rotate(img.origImage, 0);
+    rotDegrees.clear();
+    cout << "out" << endl;
+    return img;
 }

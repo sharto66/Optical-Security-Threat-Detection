@@ -37,8 +37,8 @@ Mat thresholdImage(Mat src)
     Mat channels[3];
     cvtColor(src, src, CV_BGR2HSV);
     split(src, channels);
-    int low = 16;
-    int high = 100;
+    int low = 15;
+    int high = 90;
     Mat val = (channels[2] < low) | (channels[2] > high);
     cv::threshold(val, val, 1, 255, THRESH_OTSU + CV_THRESH_BINARY);
     return val;

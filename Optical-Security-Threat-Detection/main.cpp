@@ -8,19 +8,17 @@
 #include "InputImage.h"
 #include "opticalsecurity.h"
 
-#define NUM 1
-
 using namespace std;
 using namespace cv;
 
 float borderPercent = 0.25;
+int NUM;
 std::string argument = "";
 std::string threatArg = "-Threat";
 std::string nonThreatArg = "-Non_Threat";
 
 int main(int argc, char *argv[])
 {
-    InputImage input[NUM];
     char image_name[100];
     char* image_location;
     int imgSet;
@@ -52,6 +50,7 @@ int main(int argc, char *argv[])
     }
     if(imgSet != 3){
         image_location = getImageSet(imgSet);
+        InputImage input[NUM];
         for(int i=0;i < NUM; i++)
         {        
             sprintf(image_name, image_location, i+1);
@@ -64,7 +63,6 @@ int main(int argc, char *argv[])
             {
                 input[i] = analyseImage(input[i]);
                 input[i] = applyInterface(input[i]);
-    //           input[i] = magazineDetection(input[i]);
                if(argument != threatArg && argument != nonThreatArg){
                    namedWindow(string("Display window") + std::to_string(i+1), WINDOW_AUTOSIZE);
                    imshow(string("Display window") + std::to_string(i+1), input[i].origImage);
@@ -87,6 +85,7 @@ InputImage analyseImage(InputImage src)
     src = blurImage(src);
     src = edgeDetection(src);
     src = barrelDetection(src);
+//    input[i] = magazineDetection(input[i]);
     return src;
 }
 
@@ -98,12 +97,14 @@ char* getImageSet(int set)
             image_name = "..\\images\\Threat/image%d.jpg";
         }
         else image_name = "images\\Threat/image%d.jpg";
+        NUM = 50;
     }
     else if(set == 2) {
         if(argument == nonThreatArg){
             image_name = "..\\images\\Non_Threat/image%d.jpg";
         }
         else image_name = "images\\Non_Threat/image%d.jpg";
+        NUM = 50;
     }
     else cout << "Please enter valid option" << endl;
     return image_name;
