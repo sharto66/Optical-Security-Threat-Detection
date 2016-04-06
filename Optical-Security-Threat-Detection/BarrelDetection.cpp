@@ -42,18 +42,10 @@ InputImage barrelDetection(InputImage src)
                     if(p3.inside(r1) || p3.inside(r2) && p4.inside(r1) || p4.inside(r2)){
                         if(cornerDetected(harris, p1) || cornerDetected(harris, p2)){
                             if(isGunColour(src.origImage, p1, p2, p3, p4)){
-//                                if(src.barrelPoints.size() < 100){
-//                                src.barrelPoints.push_back(p1);
-//                                src.barrelPoints.push_back(p2);
-//                                src.barrelPoints.push_back(p3);
-//                                src.barrelPoints.push_back(p4);
-//                                rotDegrees.push_back(i);
-//                                }
                                 src.containsThreat = true;
                                 src.threatInfo = "Gun barrel";
                                 cv::line(dst, p1, p2, Scalar(0,0,255), 1, 8);
                                 cv::line(dst, p3, p4, Scalar(0,255,0), 1, 8);
-//                                return src;
                             }
                         }
                     }
@@ -97,24 +89,6 @@ bool isGunColour(Mat src, Point p1, Point p2, Point p3, Point p4)
 
 Rect getROIrectangle1(Point p1, Point p2, Point p3, Point p4)
 {
-//    Rect r;
-//    float height, width, len;
-//    float len1 = norm(p1-p2);
-//    float len2 = norm(p3-p4);
-//    float len3 = norm(p1-p3);
-//    float len4 = norm(p2-p4);
-//    if(len1 >= len2){
-//        len = len1;
-//    }
-//    else len = len2;
-//    if(p1.y > p2.y || p1.y < p2.y){
-//        
-//    }
-//    else if(p1.x > p2.x || p1.x < p2.x){
-//        
-//    }
-//    r = Rect(p1.x, p1.y, 30, 30);
-//    return r;
     float height, width;
     Rect r;
     Point center = (p1 + p2 + p3 + p4) / 4;
