@@ -1,5 +1,5 @@
 # Optical-Security-Threat-Detection
-Final Year Project for DT228 Computer Science.
+Project for DT228 Computer Science.
 
 Optical-Security-Threat-Detection system features:
 
